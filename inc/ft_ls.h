@@ -9,17 +9,17 @@
 #include <time.h>
 #include <pwd.h>
 #include <grp.h>
-#include <attr/xattr.h>
+#include <sys/xattr.h>
 
 
-typedef struct s_flags
+typedef struct s_fla
 {
 	int		l;
 	int 	r;
 	int 	R;
 	int 	a;
 	int 	t;
-}				t_flags;
+}				t_fla;
 
 
 #endif
