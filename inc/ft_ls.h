@@ -3,6 +3,14 @@
 
 #include "../libft/libft/libft.h"
 #include "../libft/inc/printf.h"
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
+#include <pwd.h>
+#include <grp.h>
+#include <attr/xattr.h>
+
 
 typedef struct s_flags
 {
