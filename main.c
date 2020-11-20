@@ -67,13 +67,13 @@ void	parse_dir(t_fla *flags, struct stat **stat_s, char **names, DIR *dir, char 
 	closedir(dir);
 };
 
-void 	str_tolower(char *str)
+void 	str_toupper(char *str)
 {
 	int i;
 
 	i = ft_strlen(str);
 	while (i--)
-		str[i] = (char)ft_tolower(str[i]);
+		str[i] = (char)ft_toupper(str[i]);
 }
 
 void	lexical_sort(char **names, t_fla *flags)
@@ -92,8 +92,8 @@ void	lexical_sort(char **names, t_fla *flags)
 			{
 				first = ft_strdup(names[i]);
 				second = ft_strdup(names[i + 1]);
-				str_tolower(first);
-				str_tolower(second);
+				str_toupper(first);
+				str_toupper(second);
 				if (ft_strcmp(first, second) > 0)
 				{
 					tmp = names[i];
