@@ -20,6 +20,8 @@ typedef struct s_fla
 	int 	a;
 	int 	t;
 	int		elems;
+	int		width;
+	int		blocks;
 }				t_fla;
 
 void	lexical_sort(char **names, t_fla *flags, struct stat **stat_s);
