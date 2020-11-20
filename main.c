@@ -53,57 +53,7 @@ int		length_of_stat(char *path)
 	while (readdir(dir))
         i++;
 	closedir(dir);
-	ft_printf("i=%d\n", i);
 	return (i);
-}
-
-void	parse_dir(t_fla *flags, struct stat **stat_s, char **names, DIR *dir, char *path)
-{
-	int i;
-
-	i = 0;
-	opendir(dir);
-
-	closedir(dir);
-};
-
-void 	str_toupper(char *str)
-{
-	int i;
-
-	i = ft_strlen(str);
-	while (i--)
-		str[i] = (char)ft_toupper(str[i]);
-}
-
-void	lexical_sort(char **names, t_fla *flags)
-{
-	char *tmp;
-	char *first;
-	char *second;
-	int i;
-
-	i = -1;
-	if (flags->elems > 1)
-	{
-		while (++i < flags->elems)
-		{
-			if (names[i] != NULL && names[i + 1] != NULL)
-			{
-				first = ft_strdup(names[i]);
-				second = ft_strdup(names[i + 1]);
-				str_toupper(first);
-				str_toupper(second);
-				if (ft_strcmp(first, second) > 0)
-				{
-					tmp = names[i];
-					names[i] = names[i + 1];
-					names[i + 1] = tmp;
-					i = -1;
-				}
-			}
-		}
-	}
 }
 
 void	read_dir(t_fla *flags, char *path)
@@ -121,7 +71,6 @@ void	read_dir(t_fla *flags, char *path)
     dir = opendir(path);
 	stat_s = (struct stat**)malloc(sizeof(struct stat*) * i);
 	names = (char**)ft_memalloc(sizeof(char*) * i);
-//	parse_dir(flags, stat_s, names, dir);
 	i = 0;
     while ((space_around = readdir(dir)))
     {
@@ -133,10 +82,12 @@ void	read_dir(t_fla *flags, char *path)
 		ft_strdel(&p);
 		i++;
     }
-    lexical_sort(names, flags);
+	lexical_sort(names, flags, stat_s);
+    time_sort(flags, stat_s, names);
     for (int k = 0; k < i; k++)
-    	ft_printf("%s\n", names[k]);
-//	closedir(dir);
+    	if (names[k][0] != '.')
+    		ft_printf("%s\n", names[k]);
+	closedir(dir);
 }
 
 int		main(int ac, char **av)
@@ -148,7 +99,7 @@ int		main(int ac, char **av)
 	if (ac > 1)
 	{
 		parse(ac, av, fla);
-		// show_your_boobs(av, fla);
+		read_dir(fla, "./");
 	}
 	else
 		read_dir(fla, "./");
