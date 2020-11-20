@@ -25,5 +25,6 @@ typedef struct s_fla
 void	lexical_sort(char **names, t_fla *flags, struct stat **stat_s);
 void	time_sort(t_fla *flags, struct stat **stat_s, char **names);
 void 	str_toupper(char *str);
+void	parse(int ac, char **av, t_fla *flags);
 
 #endif

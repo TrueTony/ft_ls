@@ -1,48 +1,5 @@
 #include "inc/ft_ls.h"
 
-void 	usage(t_fla *flags)
-{
-	ft_printf("This program can work only with this flags: a, l, r, R, a\n");
-	free(flags);
-	exit(1);
-}
-
-void	catch_flags(char *str, t_fla *flags)
-{
-	int	i;
-
-	i = 0;
-	while (++i < ft_strlen(str))
-	{
-		if (str[i] == 'a')
-			flags->a = 1;
-		else if (str[i] == 'r')
-			flags->r = 1;
-		else if (str[i] == 'R')
-			flags->R = 1;
-		else if (str[i] == 't')
-			flags->t = 1;
-		else if (str[i] == 'l')
-			flags->l = 1;
-		else
-			usage(flags) ;
-	}
-}
-
-void	parse(int ac, char **av, t_fla *flags)
-{
-	int	i;
-
-	i = 0;
-	while (++i < ac)
-	{
-		if (av[i][0] == '-' && ft_isalpha(av[i][1]))
-			catch_flags(av[i], flags);
-		else
-			ft_error();
-	}
-}
-
 int		length_of_stat(char *path)
 {
 	int	i;
@@ -83,7 +40,8 @@ void	read_dir(t_fla *flags, char *path)
 		i++;
     }
 	lexical_sort(names, flags, stat_s);
-    time_sort(flags, stat_s, names);
+    if (flags->t)
+    	time_sort(flags, stat_s, names);
     for (int k = 0; k < i; k++)
     	if (names[k][0] != '.')
     		ft_printf("%s\n", names[k]);

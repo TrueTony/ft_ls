@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD 99)
 include_directories(inc)
 
 set(SRC
-        main.c sort.c add_func.c)
+        main.c sort.c add_func.c parse.c)
 
 add_executable(ft_ls
         ${SRC} )
