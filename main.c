@@ -67,6 +67,45 @@ void	parse_dir(t_fla *flags, struct stat **stat_s, char **names, DIR *dir, char 
 	closedir(dir);
 };
 
+void 	str_tolower(char *str)
+{
+	int i;
+
+	i = ft_strlen(str);
+	while (i--)
+		str[i] = (char)ft_tolower(str[i]);
+}
+
+void	lexical_sort(char **names, t_fla *flags)
+{
+	char *tmp;
+	char *first;
+	char *second;
+	int i;
+
+	i = -1;
+	if (flags->elems > 1)
+	{
+		while (++i < flags->elems)
+		{
+			if (names[i] != NULL && names[i + 1] != NULL)
+			{
+				first = ft_strdup(names[i]);
+				second = ft_strdup(names[i + 1]);
+				str_tolower(first);
+				str_tolower(second);
+				if (ft_strcmp(first, second) > 0)
+				{
+					tmp = names[i];
+					names[i] = names[i + 1];
+					names[i + 1] = tmp;
+					i = -1;
+				}
+			}
+		}
+	}
+}
+
 void	read_dir(t_fla *flags, char *path)
 {
 	DIR				*dir;
@@ -78,21 +117,26 @@ void	read_dir(t_fla *flags, char *path)
 
 
     i = length_of_stat(path) + 1;
+    flags->elems = i - 1;
     dir = opendir(path);
 	stat_s = (struct stat**)malloc(sizeof(struct stat*) * i);
 	names = (char**)ft_memalloc(sizeof(char*) * i);
 //	parse_dir(flags, stat_s, names, dir);
+	i = 0;
     while ((space_around = readdir(dir)))
     {
-		ft_printf("%s\n", space_around->d_name);
+//		ft_printf("%s\n", space_around->d_name);
 		p = ft_strjoin("./", space_around->d_name);
         stat_s[i] = (struct stat*)malloc(sizeof(struct stat));
         stat(space_around->d_name, stat_s[i]);
 		names[i] = ft_strdup(space_around->d_name);
 		ft_strdel(&p);
-        i++;
+		i++;
     }
-	closedir(dir);
+    lexical_sort(names, flags);
+    for (int k = 0; k < i; k++)
+    	ft_printf("%s\n", names[k]);
+//	closedir(dir);
 }
 
 int		main(int ac, char **av)

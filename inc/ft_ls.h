@@ -19,6 +19,7 @@ typedef struct s_fla
 	int 	R;
 	int 	a;
 	int 	t;
+	int		elems;
 }				t_fla;
 
 
