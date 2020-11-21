@@ -19,57 +19,45 @@ void	print_lugs(t_flags *fla, struct stat *stat_s)
 
 	j = fla->sizes->link_size - ft_numstr(stat_s->st_nlink);
 	while (j--)
-	{
 		ft_putchar(' ');
-	}
-	ft_printf(" %d ", stat_s->st_nlink);
-	// ft_printf("%s ", getpwuid(stat_s->st_uid)->pw_name);
+	ft_printf("  %d ", stat_s->st_nlink);
 	j = fla->sizes->owner_size - ft_strlen(getpwuid(stat_s->st_uid)->pw_name);
 	while (j--)
-	{
 		ft_putchar(' ');
-	}
 	ft_printf("%s ", getpwuid(stat_s->st_uid)->pw_name);
 	j = fla->sizes->group_size - ft_strlen(getgrgid(stat_s->st_gid)->gr_name);
 	while (j--)
-	{
 		ft_putchar(' ');
-	}
-	ft_printf("%s ", getgrgid(stat_s->st_gid)->gr_name);
+	ft_printf(" %s ", getgrgid(stat_s->st_gid)->gr_name);
 	j = fla->sizes->size_size - ft_numstr(stat_s->st_size);
 	while (j--)
-	{
 		ft_putchar(' ');
-	}
-	ft_printf("%d ", stat_s->st_size);
+	ft_printf(" %d", stat_s->st_size);
 }
 
 void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 {
 	int	i;
-	size_t j;
 
-	i = -1;
+	i = 0;
+
 	ft_printf("total: %d\n", fla->sizes->total);
-	while (++i < fla->elems)
+	while (i < fla->elems)
 	{
+		if (fla->a != 1)
+			if (names[i][0] == '.')
+			{
+				i++;
+				continue;
+			}
 		check_type(stat_s[i]);
 		check_access(stat_s[i]);
 		print_lugs(fla, stat_s[i]);
-
-
-
-			// ft_printf(" %d %s %s %d", stat_s[i]->st_nlink, getpwuid(stat_s[i]->st_uid)->pw_name,
-			// 	getgrgid(stat_s[i]->st_gid)->gr_name, stat_s[i]->st_size);
-
-		char *tmp =  ctime(&stat_s[i]->st_atimespec.tv_sec);
-
-
+		char *tmp =  ctime(&stat_s[i]->st_mtimespec.tv_sec);
 		tmp = ft_strndup(tmp+4, 12);
 		ft_printf(" %s %s", tmp, names[i]);
-
-    		ft_printf("\n");
-		// exit(1);
+		ft_printf("\n");
+		i++;
 	}
 }
 
@@ -81,7 +69,6 @@ void	read_dir(t_flags *flags, char *path)
 	int				i;
     struct dirent	*dirent;
 	char			*p;
-	// int				width;
 
 
     i = length_of_stat(path) + 1;
@@ -92,7 +79,6 @@ void	read_dir(t_flags *flags, char *path)
 	i = 0;
     while ((dirent = readdir(dir)))
     {
-//		ft_printf("%s\n", dirent->d_name);
 		p = ft_strjoin("./", dirent->d_name);
         stat_s[i] = (struct stat*)malloc(sizeof(struct stat));
 		if (flags->l)
@@ -101,7 +87,6 @@ void	read_dir(t_flags *flags, char *path)
         	stat(dirent->d_name, stat_s[i]);
 		get_sizes(flags, stat_s[i]);
 		names[i] = ft_strdup(dirent->d_name);
-		ft_printf("%s %d\n", names[i], stat_s[i]->st_blocks);
 		ft_strdel(&p);
 		i++;
     }
@@ -111,9 +96,6 @@ void	read_dir(t_flags *flags, char *path)
     	time_sort(flags, stat_s, names);
 	if (flags->l)
         parse_l(flags, stat_s, names);
-//    for (int k = 0; k < i; k++)
-//    	if (names[k][0] != '.')
-//    		ft_printf("%s\n", names[k]);
 	closedir(dir);
 }
 
