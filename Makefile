@@ -4,13 +4,13 @@ SRCS := add_func.c \
         checks.c \
         main.c \
         parse.c \
-        sort.c
+        sort.c 
 
 OBJ = $(SRCS:.c=.o)
 
 LIB_DIR = ./printf/
 LIBFT = $(LIB_DIR)libftprintf.a
-LIB_HDR = $(LIB_DIR)src/libft/libft.h
+
 FLAGS = -g -Wall -Werror -Wextra
 INCLUDE = ./inc/ft_ls.h
 
@@ -21,7 +21,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(MAKE) -C $(LIB_DIR)
-	gcc -o $(NAME) $(FLAGS) $(OBJ) -L$(LIB_DIR) -I$(LIB_HDR)
+	gcc -o $(NAME) $(FLAGS) $(OBJ) $(LIBFT)
 
 clean:
 	rm -f $(OBJ)

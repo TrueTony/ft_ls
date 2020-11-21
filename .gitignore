@@ -3,3 +3,5 @@ cmake-build-debug
 cmake-build-debug-coverage
 !/libft/.DS_Store
 .idea
+*.a
+ft_ls
