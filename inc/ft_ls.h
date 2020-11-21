@@ -1,8 +1,8 @@
 #ifndef _FT_LS_H_
 #define _FT_LS_H_
 
-#include "../libft/libft/libft.h"
-#include "../libft/inc/printf.h"
+#include "../printf/src/libft/libft.h"
+#include "../printf/includes/printf.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -13,11 +13,11 @@
 
 typedef struct	s_sizes
 {
-	int		link_size;
-	int		owner_size;
-	int 	group_size;
-	int 	size_size;
-	int 	total;
+	size_t		link_size;
+	size_t		owner_size;
+	size_t 	group_size;
+	size_t 	size_size;
+	size_t 	total;
 }				t_sizes;
 typedef struct s_flags
 {

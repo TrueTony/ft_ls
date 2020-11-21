@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/08/10 16:08:24 by hlikely           #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:33 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/07 13:36:31 by ksenaida          #+#    #+#             */
+/*   Updated: 2020/11/21 15:59:01 by ksenaida         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 # include <ctype.h>
 # include <limits.h>
 # include <stdarg.h>
-# include "../inc/printf.h"
 
 # define MAXINT 2147483647
 # define MININT -2147483648
@@ -115,6 +114,7 @@ int					mod_n(int a);
 int					max_n(int a, int b);
 int					min_n(int a, int b);
 void				ft_free_two_demention(char **str, int i);
-size_t				ft_numstr(long n);
+size_t	ft_numstr(long n);
+
 
 #endif

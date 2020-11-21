@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_free_two_demention.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2020/10/13 22:31:39 by ksenaida          #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:50 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_numstr(long n)
+void	ft_free_two_demention(char **str, int i)
 {
-	size_t i;
-
-	i = 1;
-	if (n < 0)
-		i++;
-	while (n > 9)
+	while (i >= 0)
 	{
-		n /= 10;
-		i++;
+		free(str[i]);
+		i--;
 	}
-	return (i);
+	free(str);
 }

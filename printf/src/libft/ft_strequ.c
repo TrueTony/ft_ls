@@ -1,28 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_strequ.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/18 18:11:36 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:49 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_numstr(long n)
+int	ft_strequ(char const *s1, char const *s2)
 {
-	size_t i;
+	unsigned int i;
 
-	i = 1;
-	if (n < 0)
-		i++;
-	while (n > 9)
+	i = 0;
+	if (!s1 || !s2)
+		return (s1 == s2 ? 1 : 0);
+	if (ft_strlen((char *)s1) != ft_strlen((char *)s2))
+		return (0);
+	while (s1[i] && s2[i])
 	{
-		n /= 10;
+		if (s1[i] != s2[i])
+			return (0);
 		i++;
 	}
-	return (i);
+	return (1);
 }

@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_memcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/18 17:58:42 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:49 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_numstr(long n)
+int	ft_memcmp(const void *buf1, const void *buf2, size_t count)
 {
-	size_t i;
+	unsigned char	*ptr1;
+	unsigned char	*ptr2;
 
-	i = 1;
-	if (n < 0)
-		i++;
-	while (n > 9)
+	ptr1 = (unsigned char*)buf1;
+	ptr2 = (unsigned char*)buf2;
+	while (count--)
 	{
-		n /= 10;
-		i++;
+		if (*ptr1 != *ptr2)
+			return (*ptr1 - *ptr2);
+		++ptr1;
+		++ptr2;
 	}
-	return (i);
+	return (0);
 }

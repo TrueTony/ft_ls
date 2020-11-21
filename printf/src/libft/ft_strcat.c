@@ -1,28 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_strcat.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/18 18:06:03 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:52 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_numstr(long n)
+char	*ft_strcat(char *destptr, const char *srcptr)
 {
-	size_t i;
+	unsigned int i;
+	unsigned int j;
 
-	i = 1;
-	if (n < 0)
+	i = 0;
+	j = 0;
+	while (destptr[i] != '\0')
 		i++;
-	while (n > 9)
+	while (srcptr[j] != '\0')
 	{
-		n /= 10;
+		destptr[i] = srcptr[j];
 		i++;
+		j++;
 	}
-	return (i);
+	destptr[i] = '\0';
+	return (destptr);
 }

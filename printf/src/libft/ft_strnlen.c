@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_strnlen.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/20 18:47:17 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:49 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_numstr(long n)
+size_t	ft_strnlen(const char *s, size_t maxlen)
 {
-	size_t i;
+	size_t len;
 
-	i = 1;
-	if (n < 0)
-		i++;
-	while (n > 9)
+	len = 0;
+	while (len < maxlen)
 	{
-		n /= 10;
-		i++;
+		if (!*s)
+			break ;
+		len++;
+		maxlen++;
 	}
-	return (i);
+	return (len);
 }

@@ -6,7 +6,7 @@ void 	get_sizes(t_flags *flags, struct stat *stat)
 	if (ft_numstr(stat->st_nlink) > flags->sizes->link_size)
 		flags->sizes->link_size = ft_numstr(stat->st_nlink);
 	if (ft_strlen(getpwuid(stat->st_uid)->pw_name) > flags->sizes->owner_size)
-		flags->sizes->link_size = ft_strlen(getpwuid(stat->st_uid)->pw_name);
+		flags->sizes->owner_size = ft_strlen(getpwuid(stat->st_uid)->pw_name);
 	if (ft_strlen(getgrgid(stat->st_gid)->gr_name) > flags->sizes->group_size)
 		flags->sizes->group_size = ft_strlen(getgrgid(stat->st_gid)->gr_name);
 	if (ft_numstr(stat->st_size) > flags->sizes->size_size)

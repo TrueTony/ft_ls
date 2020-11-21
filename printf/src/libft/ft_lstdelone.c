@@ -1,28 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_lstdelone.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/22 17:18:51 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:52 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include "libft.h"
 
-size_t	ft_numstr(long n)
+void	ft_lstdelone(t_list **link, void (*del)(void *, size_t))
 {
-	size_t i;
-
-	i = 1;
-	if (n < 0)
-		i++;
-	while (n > 9)
-	{
-		n /= 10;
-		i++;
-	}
-	return (i);
+	del((*link)->content, (*link)->content_size);
+	free(*link);
+	*link = NULL;
 }

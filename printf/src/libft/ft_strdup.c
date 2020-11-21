@@ -1,28 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/18 18:10:50 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:49 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdlib.h>
 
-size_t	ft_numstr(long n)
+char	*ft_strdup(const char *str)
 {
-	size_t i;
+	char	*a;
+	int		i;
+	int		buf;
 
-	i = 1;
-	if (n < 0)
-		i++;
-	while (n > 9)
+	i = 0;
+	buf = 0;
+	while (str[buf])
+		buf++;
+	if (!(a = malloc(sizeof(char) * (buf + 1))))
+		return (NULL);
+	while (str[i])
 	{
-		n /= 10;
+		a[i] = str[i];
 		i++;
 	}
-	return (i);
+	a[i] = '\0';
+	return (a);
 }

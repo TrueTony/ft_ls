@@ -1,28 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/18 18:16:10 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:51 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_numstr(long n)
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	size_t i;
+	unsigned int	i;
+	char			*r;
 
-	i = 1;
-	if (n < 0)
-		i++;
-	while (n > 9)
+	if (!s || !(r = ft_memalloc((size_t)ft_strlen((char *)s) + 1)))
+		return (NULL);
+	i = 0;
+	while (s[i])
 	{
-		n /= 10;
+		r[i] = f(i, s[i]);
 		i++;
 	}
-	return (i);
+	return (r);
 }

@@ -13,9 +13,41 @@ int		length_of_stat(char *path)
 	return (i);
 }
 
-void	parse_l(t_flags *fla, struct stat	**stat_s, char **names)
+void	print_lugs(t_flags *fla, struct stat *stat_s)
+{
+	size_t j;
+
+	j = fla->sizes->link_size - ft_numstr(stat_s->st_nlink);
+	while (j--)
+	{
+		ft_putchar(' ');
+	}
+	ft_printf(" %d ", stat_s->st_nlink);
+	// ft_printf("%s ", getpwuid(stat_s->st_uid)->pw_name);
+	j = fla->sizes->owner_size - ft_strlen(getpwuid(stat_s->st_uid)->pw_name);
+	while (j--)
+	{
+		ft_putchar(' ');
+	}
+	ft_printf("%s ", getpwuid(stat_s->st_uid)->pw_name);
+	j = fla->sizes->group_size - ft_strlen(getgrgid(stat_s->st_gid)->gr_name);
+	while (j--)
+	{
+		ft_putchar(' ');
+	}
+	ft_printf("%s ", getgrgid(stat_s->st_gid)->gr_name);
+	j = fla->sizes->size_size - ft_numstr(stat_s->st_size);
+	while (j--)
+	{
+		ft_putchar(' ');
+	}
+	ft_printf("%d ", stat_s->st_size);
+}
+
+void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 {
 	int	i;
+	size_t j;
 
 	i = -1;
 	ft_printf("total: %d\n", fla->sizes->total);
@@ -23,9 +55,12 @@ void	parse_l(t_flags *fla, struct stat	**stat_s, char **names)
 	{
 		check_type(stat_s[i]);
 		check_access(stat_s[i]);
+		print_lugs(fla, stat_s[i]);
 
-		ft_printf(" %d %s %s %d", stat_s[i]->st_nlink, getpwuid(stat_s[i]->st_uid)->pw_name,
-			getgrgid(stat_s[i]->st_gid)->gr_name, stat_s[i]->st_size);
+
+
+			// ft_printf(" %d %s %s %d", stat_s[i]->st_nlink, getpwuid(stat_s[i]->st_uid)->pw_name,
+			// 	getgrgid(stat_s[i]->st_gid)->gr_name, stat_s[i]->st_size);
 
 		char *tmp =  ctime(&stat_s[i]->st_atimespec.tv_sec);
 
@@ -46,7 +81,7 @@ void	read_dir(t_flags *flags, char *path)
 	int				i;
     struct dirent	*dirent;
 	char			*p;
-	int				width;
+	// int				width;
 
 
     i = length_of_stat(path) + 1;

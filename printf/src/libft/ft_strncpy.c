@@ -1,28 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_strncpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/18 18:18:42 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:50 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_numstr(long n)
+char	*ft_strncpy(char *dst, const char *src, size_t len)
 {
-	size_t i;
+	int	i;
+	int	len_src;
 
-	i = 1;
-	if (n < 0)
-		i++;
-	while (n > 9)
+	i = 0;
+	len_src = 0;
+	while (src[len_src] != '\0')
+		len_src++;
+	while (len_src && len)
 	{
-		n /= 10;
+		dst[i] = src[i];
+		len_src--;
+		i++;
+		len--;
+	}
+	while (len)
+	{
+		dst[i] = '\0';
+		len--;
 		i++;
 	}
-	return (i);
+	return (dst);
 }

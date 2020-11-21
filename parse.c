@@ -9,7 +9,7 @@ void 	usage(t_flags *flags)
 
 void	catch_flags(char *str, t_flags *flags)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (++i < ft_strlen(str))

@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_numstr.c                                        :+:      :+:    :+:   */
+/*   ft_strnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/21 15:59:08 by ksenaida          #+#    #+#             */
-/*   Updated: 2020/11/21 16:08:49 by ksenaida         ###   ########.fr       */
+/*   Created: 2019/09/18 18:19:50 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/18 01:04:50 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdlib.h>
 
-size_t	ft_numstr(long n)
+char	*ft_strnew(size_t size)
 {
-	size_t i;
+	size_t	i;
+	char	*str;
 
-	i = 1;
-	if (n < 0)
-		i++;
-	while (n > 9)
-	{
-		n /= 10;
-		i++;
-	}
-	return (i);
+	if (!(str = ft_memalloc(size + 1)))
+		return (NULL);
+	i = 0;
+	while (i < size)
+		str[i++] = '\0';
+	return (str);
 }
