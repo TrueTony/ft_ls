@@ -61,6 +61,7 @@ void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 			ft_printf(" -> ");
 			ft_printf("%s", buf);
 		}
+		ft_bzero(buf, 1024);
 		ft_printf("\n");
 		i++;
 	}
@@ -110,6 +111,7 @@ int 	is_file(t_flags *flags, char *path)
 			ft_printf(" -> ");
 			ft_printf("%s", tp);
 		}
+		ft_bzero(tp, 1024);
 	}
 	else
 		ft_printf("% s", path);
@@ -187,18 +189,17 @@ void	time_sort_av(t_flags *flags, char **av, int ac)
 {
 	int i;
 	char *tmp;
-	struct stat *first = NULL;
-	struct stat *second = NULL;
+	struct stat first;
+	struct stat second;
 
 	i = -1;
 	if (ac == 1)
 		return ;
-	while (++i < ac - 1)
+	while (++i < ac)
 	{
-		lstat(av[i], first);
-		lstat(av[i + 1], second);
-		if ((first != NULL && second != NULL) &&
-		(flags->r * first->st_mtime < flags->r * second->st_mtime))
+		lstat(av[i], &first);
+		lstat(av[i + 1], &second);
+		if (flags->r * first.st_mtime < flags->r * second.st_mtime)
 		{
 			tmp = av[i];
 			av[i] = av[i + 1];
@@ -246,9 +247,9 @@ int		main(int ac, char **av)
 		return (0);
 	if(!(fla->sizes = (t_sizes*)ft_memalloc(sizeof(t_sizes))))
 		return (0);
+	fla->r = 1;
 	if (ac > 1)
 	{
-		fla->r = 1;
 		if ((index = parse(ac, av, fla)) == 0)
 			read_dir(fla, "./");
 		else
