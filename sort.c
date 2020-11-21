@@ -1,6 +1,6 @@
 #include "inc/ft_ls.h"
 
-void	lexical_sort(char **names, t_fla *flags, struct stat **stat_s)
+void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s)
 {
 	char *tmp;
 	char *first;
@@ -17,8 +17,8 @@ void	lexical_sort(char **names, t_fla *flags, struct stat **stat_s)
 			{
 				first = ft_strdup(names[i]);
 				second = ft_strdup(names[i + 1]);
-				str_toupper(first);
-				str_toupper(second);
+//				str_toupper(first);
+//				str_toupper(second);
 				if (ft_strcmp(first, second) > 0)
 				{
 					tmp_stat = stat_s[i];
@@ -36,7 +36,7 @@ void	lexical_sort(char **names, t_fla *flags, struct stat **stat_s)
 	}
 }
 
-void	time_sort(t_fla *flags, struct stat **stat_s, char **names)
+void	time_sort(t_flags *flags, struct stat **stat_s, char **names)
 {
 	int i;
 	char *tmp;

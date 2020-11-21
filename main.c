@@ -13,48 +13,21 @@ int		length_of_stat(char *path)
 	return (i);
 }
 
-void	parse_l(t_fla *fla, struct stat	**stat_s, char **names)
+void	parse_l(t_flags *fla, struct stat	**stat_s, char **names)
 {
 	int	i;
 
 	i = -1;
-	ft_printf("total: %d\n", fla->blocks);
+	ft_printf("total: %d\n", fla->sizes->total);
 	while (++i < fla->elems)
 	{
-		S_ISDIR(stat_s[i]->st_mode) ? ft_putchar('d') : ft_putchar('\0'); // is papka
-		S_ISREG(stat_s[i]->st_mode) ? ft_putchar('-') : ft_putchar('\0'); // is file
-		S_ISCHR(stat_s[i]->st_mode) ? ft_putchar('c') : ft_putchar('\0'); //symboly spec file
-		S_ISBLK(stat_s[i]->st_mode) ? ft_putchar('b') : ft_putchar('\0'); // block file
-		S_ISFIFO(stat_s[i]->st_mode) ? ft_putchar('p') : ft_putchar('\0'); // fifo channel
-		S_ISLNK(stat_s[i]->st_mode) ? ft_putchar('l') : ft_putchar('\0'); // sym link
-		S_ISSOCK(stat_s[i]->st_mode) ? ft_putchar('s') : ft_putchar('\0'); // socket
-
-		// ft_printf("%d ", stat_s[i]->st_mode);
-		(stat_s[i]->st_mode & S_IRUSR) ? ft_putchar('r') : ft_putchar('-');
-		(stat_s[i]->st_mode & S_IWUSR) ? ft_putchar('w') : ft_putchar('-');
-		if (stat_s[i]->st_mode & S_ISUID)
-			(S_IXUSR) ? ft_putchar('S') : ft_putchar('s');
-		else
-			(stat_s[i]->st_mode & S_IXUSR) ? ft_putchar('x') : ft_putchar('-');
-
-		(stat_s[i]->st_mode & S_IRGRP) ? ft_putchar('r') : ft_putchar('-');
-		(stat_s[i]->st_mode & S_IWGRP) ? ft_putchar('w') : ft_putchar('-');
-		if (stat_s[i]->st_mode & S_ISGID)
-			(S_IXGRP) ? ft_putchar('S') : ft_putchar('s');
-		else
-			(stat_s[i]->st_mode & S_IXGRP) ? ft_putchar('x') : ft_putchar('-');
-
-		(stat_s[i]->st_mode & S_IROTH) ? ft_putchar('r') : ft_putchar('-');
-		(stat_s[i]->st_mode & S_IWOTH) ? ft_putchar('w') : ft_putchar('-');
-		if (stat_s[i]->st_mode & S_ISVTX)
-			(S_ISDIR(stat_s[i]->st_mode)) ? ft_putchar('t') : ft_putchar('T');
-		else
-			(stat_s[i]->st_mode & S_IXOTH) ? ft_putchar('x') : ft_putchar('-');
+		check_type(stat_s[i]);
+		check_access(stat_s[i]);
 
 		ft_printf(" %d %s %s %d", stat_s[i]->st_nlink, getpwuid(stat_s[i]->st_uid)->pw_name,
 			getgrgid(stat_s[i]->st_gid)->gr_name, stat_s[i]->st_size);
 
-		char *tmp =  ctime(&stat_s[i]->st_atim);
+		char *tmp =  ctime(&stat_s[i]->st_atimespec.tv_sec);
 
 
 		tmp = ft_strndup(tmp+4, 12);
@@ -65,13 +38,13 @@ void	parse_l(t_fla *fla, struct stat	**stat_s, char **names)
 	}
 }
 
-void	read_dir(t_fla *flags, char *path)
+void	read_dir(t_flags *flags, char *path)
 {
 	DIR				*dir;
 	struct stat		**stat_s;
 	char			**names;
 	int				i;
-    struct dirent	*space_around;
+    struct dirent	*dirent;
 	char			*p;
 	int				width;
 
@@ -82,19 +55,17 @@ void	read_dir(t_fla *flags, char *path)
 	stat_s = (struct stat**)malloc(sizeof(struct stat*) * i);
 	names = (char**)ft_memalloc(sizeof(char*) * i);
 	i = 0;
-    while ((space_around = readdir(dir)))
+    while ((dirent = readdir(dir)))
     {
-//		ft_printf("%s\n", space_around->d_name);
-		p = ft_strjoin("./", space_around->d_name);
+//		ft_printf("%s\n", dirent->d_name);
+		p = ft_strjoin("./", dirent->d_name);
         stat_s[i] = (struct stat*)malloc(sizeof(struct stat));
 		if (flags->l)
-	        lstat(space_around->d_name, stat_s[i]);
+	        lstat(dirent->d_name, stat_s[i]);
 		else
-        	stat(space_around->d_name, stat_s[i]);
-		if ((width = ft_numstr(stat_s[i]->st_size)) > flags->width)
-			flags->width = width;
-		flags->blocks += stat_s[i]->st_blocks;
-		names[i] = ft_strdup(space_around->d_name);
+        	stat(dirent->d_name, stat_s[i]);
+		get_sizes(flags, stat_s[i]);
+		names[i] = ft_strdup(dirent->d_name);
 		ft_printf("%s %d\n", names[i], stat_s[i]->st_blocks);
 		ft_strdel(&p);
 		i++;
@@ -105,17 +76,19 @@ void	read_dir(t_fla *flags, char *path)
     	time_sort(flags, stat_s, names);
 	if (flags->l)
         parse_l(flags, stat_s, names);
-    for (int k = 0; k < i; k++)
-    	if (names[k][0] != '.')
-    		ft_printf("%s\n", names[k]);
+//    for (int k = 0; k < i; k++)
+//    	if (names[k][0] != '.')
+//    		ft_printf("%s\n", names[k]);
 	closedir(dir);
 }
 
 int		main(int ac, char **av)
 {
-	t_fla *fla;
+	t_flags *fla;
 
-	if(!(fla = (t_fla*)ft_memalloc(sizeof(t_fla))))
+	if(!(fla = (t_flags*)ft_memalloc(sizeof(t_flags))))
+		return (0);
+	if(!(fla->sizes = (t_sizes*)ft_memalloc(sizeof(t_sizes))))
 		return (0);
 	if (ac > 1)
 	{

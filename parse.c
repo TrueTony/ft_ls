@@ -1,13 +1,13 @@
 #include "inc/ft_ls.h"
 
-void 	usage(t_fla *flags)
+void 	usage(t_flags *flags)
 {
 	ft_printf("This program can work only with this flags: a, l, r, R, a\n");
 	free(flags);
 	exit(1);
 }
 
-void	catch_flags(char *str, t_fla *flags)
+void	catch_flags(char *str, t_flags *flags)
 {
 	int	i;
 
@@ -29,7 +29,7 @@ void	catch_flags(char *str, t_fla *flags)
 	}
 }
 
-void	parse(int ac, char **av, t_fla *flags)
+void	parse(int ac, char **av, t_flags *flags)
 {
 	int	i;
 
