@@ -40,7 +40,9 @@ void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 	int	i;
 
 	i = 0;
+	char	buf[1024];
 
+	// buf = NULL;
 	ft_printf("total: %d\n", fla->sizes->total);
 	while (i < fla->elems)
 	{
@@ -56,6 +58,11 @@ void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 		char *tmp =  ctime(&stat_s[i]->st_mtimespec.tv_sec);
 		tmp = ft_strndup(tmp+4, 12);
 		ft_printf(" %s %s", tmp, names[i]);
+		if (readlink(names[i], buf, 1024) != -1)
+		{
+			ft_printf(" -> ");
+			ft_printf("%s", buf);
+		}
 		ft_printf("\n");
 		i++;
 	}
@@ -103,8 +110,11 @@ void	read_dir(t_flags *flags, char *path)
 	        lstat(dirent->d_name, stat_s[i]);
 		else
         	stat(dirent->d_name, stat_s[i]);
-		get_sizes(flags, stat_s[i]);
 		names[i] = ft_strdup(dirent->d_name);
+		if (flags->a != 1 && names[i][0] == '.')
+			;
+		else
+			get_sizes(flags, stat_s[i]);
 		ft_strdel(&p);
 		i++;
     }
@@ -128,11 +138,13 @@ int		main(int ac, char **av)
 		return (0);
 	if (ac > 1)
 	{
+		fla->r = 1;
 		parse(ac, av, fla);
 		read_dir(fla, "./");
 	}
 	else
 		read_dir(fla, "./");
+	free(fla->sizes);
 	free(fla);
 	return (0);
 }

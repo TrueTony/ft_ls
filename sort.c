@@ -3,8 +3,8 @@
 void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s)
 {
 	char *tmp;
-	char *first;
-	char *second;
+//	char *first;
+//	char *second;
 	struct stat *tmp_stat;
 	int i;
 
@@ -15,11 +15,11 @@ void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s)
 		{
 			if (names[i] != NULL && names[i + 1] != NULL)
 			{
-				first = ft_strdup(names[i]);
-				second = ft_strdup(names[i + 1]);
+//				first = ft_strdup(names[i]);
+//				second = ft_strdup(names[i + 1]);
 //				str_toupper(first);
 //				str_toupper(second);
-				if (ft_strcmp(first, second) > 0)
+				if (flags->r * ft_strcmp(names[i], names[i + 1]) > 0)
 				{
 					tmp_stat = stat_s[i];
 					stat_s[i] = stat_s[i + 1];
@@ -29,8 +29,8 @@ void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s)
 					names[i + 1] = tmp;
 					i = -1;
 				}
-				free(first);
-				free(second);
+//				free(first);
+//				free(second);
 			}
 		}
 	}
@@ -49,7 +49,7 @@ void	time_sort(t_flags *flags, struct stat **stat_s, char **names)
 	{
 		if (stat_s[i] != NULL && stat_s[i + 1] != NULL)
 		{
-			if (stat_s[i]->st_mtime < stat_s[i + 1]->st_mtime)
+			if (flags->r * stat_s[i]->st_mtime < flags->r * stat_s[i + 1]->st_mtime)
 			{
 				tmp_stat = stat_s[i];
 				stat_s[i] = stat_s[i + 1];

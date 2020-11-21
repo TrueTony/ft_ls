@@ -17,7 +17,7 @@ void	catch_flags(char *str, t_flags *flags)
 		if (str[i] == 'a')
 			flags->a = 1;
 		else if (str[i] == 'r')
-			flags->r = 1;
+			flags->r = -1;
 		else if (str[i] == 'R')
 			flags->R = 1;
 		else if (str[i] == 't')
