@@ -3,8 +3,6 @@
 void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s)
 {
 	char *tmp;
-//	char *first;
-//	char *second;
 	struct stat *tmp_stat;
 	int i;
 
@@ -13,24 +11,16 @@ void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s)
 	{
 		while (++i < flags->elems)
 		{
-			if (names[i] != NULL && names[i + 1] != NULL)
+			if ((names[i] != NULL && names[i + 1] != NULL) &&
+				(flags->r * ft_strcmp(names[i], names[i + 1]) > 0))
 			{
-//				first = ft_strdup(names[i]);
-//				second = ft_strdup(names[i + 1]);
-//				str_toupper(first);
-//				str_toupper(second);
-				if (flags->r * ft_strcmp(names[i], names[i + 1]) > 0)
-				{
-					tmp_stat = stat_s[i];
-					stat_s[i] = stat_s[i + 1];
-					stat_s[i + 1] = tmp_stat;
-					tmp = names[i];
-					names[i] = names[i + 1];
-					names[i + 1] = tmp;
-					i = -1;
-				}
-//				free(first);
-//				free(second);
+				tmp_stat = stat_s[i];
+				stat_s[i] = stat_s[i + 1];
+				stat_s[i + 1] = tmp_stat;
+				tmp = names[i];
+				names[i] = names[i + 1];
+				names[i + 1] = tmp;
+				i = -1;
 			}
 		}
 	}

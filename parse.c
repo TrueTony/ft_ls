@@ -29,7 +29,7 @@ void	catch_flags(char *str, t_flags *flags)
 	}
 }
 
-void	parse(int ac, char **av, t_flags *flags)
+int	parse(int ac, char **av, t_flags *flags)
 {
 	int	i;
 
@@ -38,7 +38,8 @@ void	parse(int ac, char **av, t_flags *flags)
 	{
 		if (av[i][0] == '-' && ft_isalpha(av[i][1]))
 			catch_flags(av[i], flags);
-		else
-			ft_error();
+		else if (av[i][0] != '-')
+			return (i);
 	}
+	return (0);
 }

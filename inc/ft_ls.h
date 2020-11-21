@@ -33,7 +33,7 @@ typedef struct s_flags
 void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s);
 void	time_sort(t_flags *flags, struct stat **stat_s, char **names);
 void 	str_toupper(char *str);
-void	parse(int ac, char **av, t_flags *flags);
+int		parse(int ac, char **av, t_flags *flags);
 void	check_type(struct stat *stat);
 void	check_access(struct stat *stat);
 void 	get_sizes(t_flags *flags, struct stat *stat);
