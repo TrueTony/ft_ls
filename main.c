@@ -61,6 +61,24 @@ void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 	}
 }
 
+void 	print_simple(t_flags *flags, char **names)
+{
+	int i;
+
+	i = 0;
+	while(names[i])
+	{
+		if (flags->a != 1)
+			if (names[i][0] == '.')
+			{
+				i++;
+				continue;
+			}
+		ft_printf("%s\n", names[i]);
+		i++;
+	}
+}
+
 void	read_dir(t_flags *flags, char *path)
 {
 	DIR				*dir;
@@ -91,11 +109,12 @@ void	read_dir(t_flags *flags, char *path)
 		i++;
     }
 	lexical_sort(names, flags, stat_s);
-
     if (flags->t)
     	time_sort(flags, stat_s, names);
 	if (flags->l)
         parse_l(flags, stat_s, names);
+	else
+		print_simple(flags, names);
 	closedir(dir);
 }
 

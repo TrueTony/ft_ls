@@ -15,9 +15,9 @@ typedef struct	s_sizes
 {
 	size_t		link_size;
 	size_t		owner_size;
-	size_t 	group_size;
-	size_t 	size_size;
-	size_t 	total;
+	size_t 		group_size;
+	size_t 		size_size;
+	size_t 		total;
 }				t_sizes;
 typedef struct s_flags
 {

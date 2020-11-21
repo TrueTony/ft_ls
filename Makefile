@@ -11,7 +11,7 @@ OBJ = $(SRCS:.c=.o)
 LIB_DIR = ./printf/
 LIBFT = $(LIB_DIR)libftprintf.a
 
-FLAGS = -g -Wall -Werror -Wextra
+FLAGS = -Wall -Werror -Wextra
 INCLUDE = ./inc/ft_ls.h
 
 all: $(NAME)
