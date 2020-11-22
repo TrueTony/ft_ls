@@ -72,7 +72,8 @@ void	check_args(t_flags *fla, int ac, char **av)
 	i = 0;
  	while (i < ac)
  	{
-		stat(av[i], &buf);
+ 		if (av[i] != NULL)
+			stat(av[i], &buf);
  		if (av[i] != NULL && S_ISDIR(buf.st_mode))
 		{
 			ft_printf("%s:\n", av[i]);

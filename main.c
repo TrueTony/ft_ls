@@ -34,7 +34,8 @@ void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
 
 	i = -1;
 	ss = flags->sizes->elems;
-	while (++i < ss)
+	free(flags->sizes);
+	while (++i < ss + 1)
 	{
 		if ((ft_strcmp(names[i], ".") != 0) && (ft_strcmp(names[i], "..") != 0)
 			&& S_ISDIR(stat_s[i]->st_mode))
@@ -46,7 +47,11 @@ void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
 			read_dir(flags, p);
 			ft_strdel(&p);
 		}
+		free(stat_s[i]);
+		free(names[i]);
 	}
+	free(stat_s);
+	free(names);
 }
 
 void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
@@ -55,10 +60,10 @@ void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 	char	buf[1024];
 	char	*tmp;
 
-	i = -1;
+	i = 0;
 	if((fla->a) || (!fla->a && ((fla->sizes->elems - fla->sizes->h_elems) > 0)))
 		ft_printf("total: %d\n", fla->sizes->total);
-	while (++i < fla->sizes->elems)
+	while (++i < fla->sizes->elems + 1)
 	{
 		if (fla->a != 1 && names[i][0] == '.')
 			continue;
@@ -114,6 +119,7 @@ int 	is_file(t_flags *flags, char *path)
 		ft_printf("% s", path);
 	ft_printf("\n");
 	free(tmp);
+	free(flags->sizes);
 	return (1);
 }
 
@@ -158,7 +164,7 @@ void	ft_free_all(t_flags *flags, char **names, struct stat **stat_s)
 		free(stat_s[i]);
 	free(stat_s);
 	free(flags->sizes);
-	free(flags);
+//	free(flags);
 }
 
 void	read_dir(t_flags *flags, char *path)
@@ -175,7 +181,9 @@ void	read_dir(t_flags *flags, char *path)
 		return ;
 	if (!(stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) * (flags->sizes->elems + 1))))
 		return ;
-//	stat_s[flags->sizes->elems] = NULL;
+	stat_s[flags->sizes->elems] = NULL;
+	names[flags->sizes->elems] = NULL;
+
 
 //	if (!(stat_s[flags->sizes->elems] = (struct stat*)ft_memalloc(sizeof(struct stat))))
 //			return;
@@ -189,7 +197,7 @@ void	read_dir(t_flags *flags, char *path)
     flags->t ? time_sort(flags, stat_s, names) : 0;
 	flags->l ? parse_l(flags, stat_s, names) : print_simple(flags, names);
 	flags->R ? if_R(flags, stat_s, names, path) : 0;
-	ft_free_all(flags, names, stat_s);
+	flags->R ? 0 : ft_free_all(flags, names, stat_s);
 }
 
 int		main(int ac, char **av)
@@ -209,5 +217,6 @@ int		main(int ac, char **av)
 	}
 	else
 		read_dir(flags, "./");
+	free(flags);
 	return (0);
 }
