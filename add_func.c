@@ -25,6 +25,6 @@ void	length_of_stat(char *path, t_flags *flags)
 	dir = opendir(path);
 	while (readdir(dir))
 		i++;
-	flags->elems = i;
+	flags->sizes->elems = i;
 	closedir(dir);
 }

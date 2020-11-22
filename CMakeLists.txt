@@ -1,16 +1,22 @@
 cmake_minimum_required(VERSION 3.17)
-project(ft_ls)
+project(ft_ls C)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 11)
 
 include_directories(inc)
-
-set(SRC
-        main.c sort.c add_func.c parse.c checks.c prints.c)
+include_directories(libft)
+include_directories(libft/inc)
+include_directories(libft/libft)
+include_directories(libft/printf)
 
 add_executable(ft_ls
-        ${SRC} )
-
+		inc/ft_ls.h
+		add_func.c
+		checks.c
+		main.c
+		parse.c
+		prints.c
+		sort.c)
 
 add_subdirectory(libft)
 target_link_libraries(ft_ls libft)

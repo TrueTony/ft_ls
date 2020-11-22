@@ -1,13 +1,56 @@
 #include "inc/ft_ls.h"
 
-void	if_b(t_flags *flags, struct stat **buf, char **names)
+char	*names_plus_paths(char* dirent_name, char *path)
 {
-	int	i;
+	char	*p;
+	char	*tmp;
+
+
+	if (ft_strcmp(path, "./") == 0)
+		p = ft_strjoin(path, dirent_name);
+	else
+	{
+		tmp = ft_strjoin(path, "/");
+		p = ft_strjoin(tmp, dirent_name);
+		free(tmp);
+	}
+	return (p);
+}
+
+void 	sizes_to_zero(t_flags *flags)
+{
+	flags->sizes->link_size = 0;
+	flags->sizes->owner_size = 0;
+	flags->sizes->group_size = 0;
+	flags->sizes->size_size = 0;
+	flags->sizes->total = 0;
+}
+
+void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
+{
+	int		i;
+	char	*p;
 
 	i = -1;
-	while (buf[++i])
-		if (names[i][0] != '.' && S_ISDIR(buf[i]->st_mode))
-			read_dir(flags, names[i]);
+	while (++i < flags->sizes->elems)
+	{
+		if (names[i][0] != '.' && S_ISDIR(stat_s[i]->st_mode))
+		{
+//			sizes_to_zero(flags);
+			p = names_plus_paths(names[i], path);
+			if (ft_strcmp("./CMakeFiles/3.17.3/CompilerIdC/tmp", p) == 0)
+				ft_printf("");
+			ft_printf("\n%s:\n", p);
+			read_dir(flags, p);
+			ft_printf("");
+			ft_strdel(&p);
+
+		}
+		// free(stat_s[i]);
+		// free(names[i]);
+	}
+	// free(stat_s);
+	// free(names);
 }
 
 void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
@@ -17,7 +60,7 @@ void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 
 	i = -1;
 	ft_printf("total: %d\n", fla->sizes->total);
-	while (++i < fla->elems)
+	while (++i < fla->sizes->elems)
 	{
 		if (fla->a != 1 && names[i][0] == '.')
 			continue;
@@ -73,13 +116,13 @@ void	make_stats(t_flags *flags, struct stat **st, char *path, char **names)
 	struct dirent	*dir;
 	int i;
 
-	d = opendir(path);
 	i = 0;
+	d = opendir(path);
 	while ((dir = readdir(d)))
 	{
-		p = ft_strjoin("./", dir->d_name);
-		st[i] = (struct stat*)malloc(sizeof(struct stat));
-		flags->l ? lstat(dir->d_name, st[i]) : stat(dir->d_name, st[i]);
+		p = names_plus_paths(dir->d_name, path);
+		st[i] = (struct stat*)ft_memalloc(sizeof(struct stat));
+		flags->l ? lstat(p, st[i]) : stat(p, st[i]);
 		names[i] = ft_strdup(dir->d_name);
 		flags->a != 1 && names[i][0] == '.' ? 0 : get_sizes(flags, st[i]);
 		ft_strdel(&p);
@@ -93,16 +136,20 @@ void	read_dir(t_flags *flags, char *path)
 	char			**names;
 	struct stat		**stat_s;
 
+	if(!(flags->sizes = (t_sizes*)ft_memalloc(sizeof(t_sizes))))
+		return ;
 	if (is_file(flags, path))
-		return;
+		return ;
 	length_of_stat(path, flags);
-	names = (char**)ft_memalloc(sizeof(char*) * flags->elems + 1);
-	stat_s = (struct stat**)malloc(sizeof(struct stat*) * flags->elems + 1);
-    make_stats(flags, stat_s, path, names);
+	names = (char**)ft_memalloc(sizeof(char*) * flags->sizes->elems + 1);
+	names[flags->sizes->elems] = NULL;
+	stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) * flags->sizes->elems + 1);
+	stat_s[flags->sizes->elems] = NULL;
+	make_stats(flags, stat_s, path, names);
 	lexical_sort(names, flags, stat_s);
     flags->t ? time_sort(flags, stat_s, names) : 0;
 	flags->l ? parse_l(flags, stat_s, names) : print_simple(flags, names);
-	flags->R ? if_b(flags, stat_s, names) : 0;
+	flags->R ? if_R(flags, stat_s, names, path) : 0;
 }
 
 int		main(int ac, char **av)
@@ -112,13 +159,15 @@ int		main(int ac, char **av)
 
 	if(!(flags = (t_flags*)ft_memalloc(sizeof(t_flags))))
 		return (0);
-	if(!(flags->sizes = (t_sizes*)ft_memalloc(sizeof(t_sizes))))
-		return (0);
 	flags->r = 1;
 	if (ac > 1)
 	{
 		if ((index = parse(ac, av, flags)) == 0)
+		{
+			if (flags->R)
+				ft_printf("./:\n");
 			read_dir(flags, "./");
+		}
 		else
 			check_args(flags, ac - index, &av[index]);
 	}

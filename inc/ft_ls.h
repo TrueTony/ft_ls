@@ -18,6 +18,7 @@ typedef struct	s_sizes
 	size_t 		group_size;
 	size_t 		size_size;
 	size_t 		total;
+	int			elems;
 }				t_sizes;
 
 typedef struct	s_flags
@@ -27,7 +28,6 @@ typedef struct	s_flags
 	int			R;
 	int			a;
 	int			t;
-	int			elems;
 	t_sizes		*sizes;
 }				t_flags;
 

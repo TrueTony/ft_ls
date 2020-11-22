@@ -4,7 +4,8 @@ SRCS := add_func.c \
         checks.c \
         main.c \
         parse.c \
-        sort.c 
+		prints.c \
+        sort.c
 
 OBJ = $(SRCS:.c=.o)
 
