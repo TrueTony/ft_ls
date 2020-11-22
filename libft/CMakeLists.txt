@@ -44,6 +44,7 @@ set(SRC libft/ft_atoi.c
         libft/ft_lstadd.c
         libft/ft_lstdel.c
         libft/ft_lstdelone.c
+        libft/ft_numstr.c
         libft/ft_lstiter.c
         libft/ft_lstmap.c
         libft/ft_lstnew.c

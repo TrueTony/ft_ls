@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/10 16:08:24 by hlikely           #+#    #+#             */
-/*   Updated: 2020/11/21 16:45:49 by hlikely          ###   ########.fr       */
+/*   Updated: 2020/11/22 00:05:42 by wtsn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,5 @@ int					mod_n(int a);
 int					max_n(int a, int b);
 int					min_n(int a, int b);
 void				ft_free_two_demention(char **str, int i);
-size_t				ft_numstr(long n);
 
 #endif

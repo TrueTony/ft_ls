@@ -1,87 +1,35 @@
 #include "inc/ft_ls.h"
 
-int		length_of_stat(char *path)
+void	if_b(t_flags *flags, struct stat **buf, char **names)
 {
 	int	i;
-	DIR	*dir;
 
-	i = 0;
-	dir = opendir(path);
-	while (readdir(dir))
-        i++;
-	closedir(dir);
-	return (i);
-}
-
-void	print_lugs(t_flags *fla, struct stat *stat_s)
-{
-	size_t j;
-
-	j = (fla->sizes->link_size > 0) ? fla->sizes->link_size - ft_numstr(stat_s->st_nlink) : 0;
-	while (j--)
-		ft_putchar(' ');
-	ft_printf("  %d ", stat_s->st_nlink);
-	j = (fla->sizes->owner_size > 0) ? fla->sizes->owner_size - ft_strlen(getpwuid(stat_s->st_uid)->pw_name) : 0;
-	while (j--)
-		ft_putchar(' ');
-	ft_printf("%s ", getpwuid(stat_s->st_uid)->pw_name);
-	j = (fla->sizes->group_size > 0) ? fla->sizes->group_size - ft_strlen(getgrgid(stat_s->st_gid)->gr_name) : 0;
-	while (j--)
-		ft_putchar(' ');
-	ft_printf(" %s ", getgrgid(stat_s->st_gid)->gr_name);
-	j = (fla->sizes->size_size > 0) ? fla->sizes->size_size - ft_numstr(stat_s->st_size) : 0;
-	while (j--)
-		ft_putchar(' ');
-	ft_printf(" %d", stat_s->st_size);
+	i = -1;
+	while (buf[++i])
+		if (names[i][0] != '.' && S_ISDIR(buf[i]->st_mode))
+			read_dir(flags, names[i]);
 }
 
 void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 {
-	int	i;
+	int		i;
 	char	buf[1024];
-	i = 0;
 
+	i = -1;
 	ft_printf("total: %d\n", fla->sizes->total);
-	while (i < fla->elems)
+	while (++i < fla->elems)
 	{
-		if (fla->a != 1)
-			if (names[i][0] == '.')
-			{
-				i++;
-				continue;
-			}
+		if (fla->a != 1 && names[i][0] == '.')
+			continue;
 		check_type(stat_s[i]);
 		check_access(stat_s[i]);
 		print_lugs(fla, stat_s[i]);
-		char *tmp =  ctime(&stat_s[i]->st_mtimespec.tv_sec);
+		char *tmp = ctime(&stat_s[i]->st_mtime);
 		tmp = ft_strndup(tmp+4, 12);
 		ft_printf(" %s %s", tmp, names[i]);
-		if (readlink(names[i], buf, 1024) != -1)
-		{
-			ft_printf(" -> ");
-			ft_printf("%s", buf);
-		}
+		readlink(names[i], buf, 1024) != -1 ? ft_printf(" -> %s", buf) : 0;
 		ft_bzero(buf, 1024);
 		ft_printf("\n");
-		i++;
-	}
-}
-
-void 	print_simple(t_flags *flags, char **names)
-{
-	int i;
-
-	i = 0;
-	while(names[i])
-	{
-		if (flags->a != 1)
-			if (names[i][0] == '.')
-			{
-				i++;
-				continue;
-			}
-		ft_printf("%s\n", names[i]);
-		i++;
 	}
 }
 
@@ -90,28 +38,27 @@ int 	is_file(t_flags *flags, char *path)
 	struct stat *tmp;
 	int			link;
 	char		buf[1024];
-	char 		tp[1024];
+	char 		*time;
 
 	tmp = (struct stat*)ft_memalloc(sizeof(struct stat));
 	lstat(path, tmp);
-	if (((link = readlink(path, buf, 1024)) < 0) && !S_ISREG(tmp->st_mode) && !S_ISFIFO(tmp->st_mode))
+	if (((link = readlink(path, buf, 1024)) < 0) &&
+	!S_ISREG(tmp->st_mode) && !S_ISFIFO(tmp->st_mode))
 		return 0;
 	if (S_ISDIR(tmp->st_mode) && !link)
 		return 0;
+	ft_bzero(buf, 1024);
 	if (flags->l)
 	{
 		check_type(tmp);
 		check_access(tmp);
 		print_lugs(flags, tmp);
-		char *ttt = ctime(&tmp->st_mtimespec.tv_sec);
-		ttt = ft_strndup(ttt+4, 12);
-		ft_printf(" %s %s", ttt, path);
-		if (readlink(path, tp, 1024) != -1)
-		{
-			ft_printf(" -> ");
-			ft_printf("%s", tp);
-		}
-		ft_bzero(tp, 1024);
+		time = ctime(&tmp->st_mtime);
+		time = ft_strndup(time + 4, 12);
+		ft_printf(" %s %s", time, path);
+		if (readlink(path, buf, 1024) != -1)
+			ft_printf(" -> %s", buf);
+		ft_bzero(buf, 1024);
 	}
 	else
 		ft_printf("% s", path);
@@ -119,145 +66,65 @@ int 	is_file(t_flags *flags, char *path)
 	return (1);
 }
 
+void	make_stats(t_flags *flags, struct stat **st, char *path, char **names)
+{
+	DIR				*d;
+	char			*p;
+	struct dirent	*dir;
+	int i;
+
+	d = opendir(path);
+	i = 0;
+	while ((dir = readdir(d)))
+	{
+		p = ft_strjoin("./", dir->d_name);
+		st[i] = (struct stat*)malloc(sizeof(struct stat));
+		flags->l ? lstat(dir->d_name, st[i]) : stat(dir->d_name, st[i]);
+		names[i] = ft_strdup(dir->d_name);
+		flags->a != 1 && names[i][0] == '.' ? 0 : get_sizes(flags, st[i]);
+		ft_strdel(&p);
+		i++;
+	}
+	closedir(d);
+}
+
 void	read_dir(t_flags *flags, char *path)
 {
-	DIR				*dir;
-	struct stat		**stat_s;
 	char			**names;
-	int				i;
-    struct dirent	*dirent;
-	char			*p;
-
+	struct stat		**stat_s;
 
 	if (is_file(flags, path))
 		return;
-    i = length_of_stat(path) + 1;
-    flags->elems = i - 1;
-    dir = opendir(path);
-	stat_s = (struct stat**)malloc(sizeof(struct stat*) * i);
-	names = (char**)ft_memalloc(sizeof(char*) * i);
-	i = 0;
-    while ((dirent = readdir(dir)))
-    {
-		p = ft_strjoin("./", dirent->d_name);
-        stat_s[i] = (struct stat*)malloc(sizeof(struct stat));
-		if (flags->l)
-	        lstat(dirent->d_name, stat_s[i]);
-		else
-        	stat(dirent->d_name, stat_s[i]);
-		names[i] = ft_strdup(dirent->d_name);
-		if (flags->a != 1 && names[i][0] == '.')
-			;
-		else
-			get_sizes(flags, stat_s[i]);
-		ft_strdel(&p);
-		i++;
-    }
+	length_of_stat(path, flags);
+	names = (char**)ft_memalloc(sizeof(char*) * flags->elems + 1);
+	stat_s = (struct stat**)malloc(sizeof(struct stat*) * flags->elems + 1);
+    make_stats(flags, stat_s, path, names);
 	lexical_sort(names, flags, stat_s);
-    if (flags->t)
-    	time_sort(flags, stat_s, names);
-	if (flags->l)
-        parse_l(flags, stat_s, names);
-	else
-		print_simple(flags, names);
-	closedir(dir);
-}
-
-void	lexical_sort_av(t_flags *flags, char **av, int ac)
-{
-	char *tmp;
-	int i;
-
-	i = -1;
-	if (ac > 1)
-	{
-		while (++i < ac)
-		{
-			if ((av[i] != NULL && av[i + 1] != NULL) &&
-				(flags->r * ft_strcmp(av[i], av[i + 1]) > 0))
-			{
-				tmp = av[i];
-				av[i] = av[i + 1];
-				av[i + 1] = tmp;
-				i = -1;
-			}
-		}
-	}
-}
-
-void	time_sort_av(t_flags *flags, char **av, int ac)
-{
-	int i;
-	char *tmp;
-	struct stat first;
-	struct stat second;
-
-	i = -1;
-	if (ac == 1)
-		return ;
-	while (++i < ac)
-	{
-		lstat(av[i], &first);
-		lstat(av[i + 1], &second);
-		if (flags->r * first.st_mtime < flags->r * second.st_mtime)
-		{
-			tmp = av[i];
-			av[i] = av[i + 1];
-			av[i + 1] = tmp;
-			i = -1;
-		}
-	}
-}
-
-void	check_args(t_flags *fla, int ac, char **av)
-{
-	int i;
-	struct stat buf;
-
-	i = 0;
-	lexical_sort_av(fla, av, ac);
-	if (fla->t)
-		time_sort_av(fla, av, ac);
-	while (i < ac)
-	{
-		if (stat(av[i], &buf) != 0)
-		{
-			perror(av[i]);
-			av[i] = NULL;
-		}
-		else
-			get_sizes(fla, &buf);
-		i++;
-	}
-	i = 0;
-	while (i < ac)
-	{
-		if (av[i] != NULL)
-			read_dir(fla, av[i]);
-		i++;
-	}
+    flags->t ? time_sort(flags, stat_s, names) : 0;
+	flags->l ? parse_l(flags, stat_s, names) : print_simple(flags, names);
+	flags->R ? if_b(flags, stat_s, names) : 0;
 }
 
 int		main(int ac, char **av)
 {
-	t_flags *fla;
+	t_flags *flags;
 	int		index;
 
-	if(!(fla = (t_flags*)ft_memalloc(sizeof(t_flags))))
+	if(!(flags = (t_flags*)ft_memalloc(sizeof(t_flags))))
 		return (0);
-	if(!(fla->sizes = (t_sizes*)ft_memalloc(sizeof(t_sizes))))
+	if(!(flags->sizes = (t_sizes*)ft_memalloc(sizeof(t_sizes))))
 		return (0);
-	fla->r = 1;
+	flags->r = 1;
 	if (ac > 1)
 	{
-		if ((index = parse(ac, av, fla)) == 0)
-			read_dir(fla, "./");
+		if ((index = parse(ac, av, flags)) == 0)
+			read_dir(flags, "./");
 		else
-			check_args(fla, ac - index, &av[index]);
+			check_args(flags, ac - index, &av[index]);
 	}
 	else
-		read_dir(fla, "./");
-	free(fla->sizes);
-	free(fla);
+		read_dir(flags, "./");
+	free(flags->sizes);
+	free(flags);
 	return (0);
 }

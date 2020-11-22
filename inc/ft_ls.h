@@ -19,23 +19,33 @@ typedef struct	s_sizes
 	size_t 		size_size;
 	size_t 		total;
 }				t_sizes;
-typedef struct s_flags
+
+typedef struct	s_flags
 {
-	int		l;
-	int 	r;
-	int 	R;
-	int 	a;
-	int 	t;
-	int		elems;
-	t_sizes	*sizes;
+	int			l;
+	int			r;
+	int			R;
+	int			a;
+	int			t;
+	int			elems;
+	t_sizes		*sizes;
 }				t_flags;
 
 void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s);
+void	read_dir(t_flags *flags, char *path);
 void	time_sort(t_flags *flags, struct stat **stat_s, char **names);
 void 	str_toupper(char *str);
 int		parse(int ac, char **av, t_flags *flags);
 void	check_type(struct stat *stat);
 void	check_access(struct stat *stat);
 void 	get_sizes(t_flags *flags, struct stat *stat);
+void	lexical_sort_av(t_flags *flags, char **av, int ac);
+void	time_sort_av(t_flags *flags, char **av, int ac);
+void	check_args(t_flags *fla, int ac, char **av);
+void	print_lugs(t_flags *fla, struct stat *stat_s);
+void 	print_simple(t_flags *flags, char **names);
+void	length_of_stat(char *path, t_flags *flags);
+void 	usage(t_flags *flags);
+
 
 #endif
