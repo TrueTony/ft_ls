@@ -1,7 +1,5 @@
 #include "inc/ft_ls.h"
 
-
-
 void	catch_flags(char *str, t_flags *flags)
 {
 	size_t	i;

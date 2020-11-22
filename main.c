@@ -44,21 +44,16 @@ void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
 			p = names_plus_paths(names[i], path);
 			ft_printf("\n%s:\n", p);
 			read_dir(flags, p);
-			ft_printf("");
 			ft_strdel(&p);
-
 		}
-		 free(stat_s[i]);
-		 free(names[i]);
 	}
-	 free(stat_s);
-	 free(names);
 }
 
 void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 {
 	int		i;
 	char	buf[1024];
+	char	*tmp;
 
 	i = -1;
 	if((fla->a) || (!fla->a && ((fla->sizes->elems - fla->sizes->h_elems) > 0)))
@@ -70,12 +65,13 @@ void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 		check_type(stat_s[i]);
 		check_access(stat_s[i]);
 		print_lugs(fla, stat_s[i]);
-		char *tmp = ctime(&stat_s[i]->st_mtime);
+		tmp = ctime(&stat_s[i]->st_mtime);
 		tmp = ft_strndup(tmp+4, 12);
 		ft_printf(" %s %s", tmp, names[i]);
 		readlink(names[i], buf, 1024) != -1 ? ft_printf(" -> %s", buf) : 0;
 		ft_bzero(buf, 1024);
 		ft_printf("\n");
+		free(tmp);
 	}
 }
 
@@ -86,13 +82,20 @@ int 	is_file(t_flags *flags, char *path)
 	char		buf[1024];
 	char 		*time;
 
-	tmp = (struct stat*)ft_memalloc(sizeof(struct stat));
+	if (!(tmp = (struct stat*)ft_memalloc(sizeof(struct stat))))
+		return (0);
 	lstat(path, tmp);
 	if (((link = readlink(path, buf, 1024)) < 0) &&
 	!S_ISREG(tmp->st_mode) && !S_ISFIFO(tmp->st_mode))
+	{
+		free(tmp);
 		return 0;
+	}
 	if (S_ISDIR(tmp->st_mode) && !link)
+	{
+		free(tmp);
 		return 0;
+	}
 	ft_bzero(buf, 1024);
 	if (flags->l)
 	{
@@ -105,10 +108,12 @@ int 	is_file(t_flags *flags, char *path)
 		if (readlink(path, buf, 1024) != -1)
 			ft_printf(" -> %s", buf);
 		ft_bzero(buf, 1024);
+		free(time);
 	}
 	else
 		ft_printf("% s", path);
 	ft_printf("\n");
+	free(tmp);
 	return (1);
 }
 
@@ -117,14 +122,15 @@ void	make_stats(t_flags *flags, struct stat **st, char *path, char **names)
 	DIR				*d;
 	char			*p;
 	struct dirent	*dir;
-	int i;
+	int				i;
 
 	i = 0;
 	d = opendir(path);
 	while ((dir = readdir(d)))
 	{
 		p = names_plus_paths(dir->d_name, path);
-		st[i] = (struct stat*)ft_memalloc(sizeof(struct stat));
+		if (!(st[i] = (struct stat*)ft_memalloc(sizeof(struct stat))))
+			return ;
 		flags->l ? lstat(p, st[i]) : stat(p, st[i]);
 		names[i] = ft_strdup(dir->d_name);
 		names[i][0] == '.' ? flags->sizes->h_elems++ : 0;
@@ -132,7 +138,27 @@ void	make_stats(t_flags *flags, struct stat **st, char *path, char **names)
 		ft_strdel(&p);
 		i++;
 	}
+	if (!(st[i] = (struct stat*)ft_memalloc(sizeof(struct stat))))
+		return ;
+	if (!(names[i] = (char*)ft_memalloc(sizeof(char))))
+		return ;
+
 	closedir(d);
+}
+
+void	ft_free_all(t_flags *flags, char **names, struct stat **stat_s)
+{
+	int i;
+
+	i = -1;
+//	free(names[flags->sizes->elems]);
+	ft_free_two_demention(names, flags->sizes->elems);
+
+	while (++i < flags->sizes->elems + 1)
+		free(stat_s[i]);
+	free(stat_s);
+	free(flags->sizes);
+	free(flags);
 }
 
 void	read_dir(t_flags *flags, char *path)
@@ -145,15 +171,25 @@ void	read_dir(t_flags *flags, char *path)
 	if (is_file(flags, path))
 		return ;
 	length_of_stat(path, flags);
-	names = (char**)ft_memalloc(sizeof(char*) * flags->sizes->elems + 1);
-	names[flags->sizes->elems] = NULL;
-	stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) * flags->sizes->elems + 1);
-	stat_s[flags->sizes->elems] = NULL;
+	if (!(names = (char**)ft_memalloc(sizeof(char*) * (flags->sizes->elems + 1))))
+		return ;
+	if (!(stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) * (flags->sizes->elems + 1))))
+		return ;
+//	stat_s[flags->sizes->elems] = NULL;
+
+//	if (!(stat_s[flags->sizes->elems] = (struct stat*)ft_memalloc(sizeof(struct stat))))
+//			return;
+//	stat_s[flags->sizes->elems] = NULL;
+//	if (!(names[flags->sizes->elems] = (char*)ft_memalloc(sizeof(char))))
+//		return;
+//	names[flags->sizes->elems] = NULL;
+
 	make_stats(flags, stat_s, path, names);
 	lexical_sort(names, flags, stat_s);
     flags->t ? time_sort(flags, stat_s, names) : 0;
 	flags->l ? parse_l(flags, stat_s, names) : print_simple(flags, names);
 	flags->R ? if_R(flags, stat_s, names, path) : 0;
+	ft_free_all(flags, names, stat_s);
 }
 
 int		main(int ac, char **av)
@@ -173,7 +209,5 @@ int		main(int ac, char **av)
 	}
 	else
 		read_dir(flags, "./");
-	free(flags->sizes);
-	free(flags);
 	return (0);
 }

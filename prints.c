@@ -27,7 +27,7 @@ void 	print_simple(t_flags *flags, char **names)
 	int i;
 
 	i = 0;
-	while(names[i])
+	while(i < flags->sizes->elems)
 	{
 		if (flags->a != 1)
 			if (names[i][0] == '.')

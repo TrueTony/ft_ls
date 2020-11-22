@@ -62,14 +62,22 @@ void	check_args(t_flags *fla, int ac, char **av)
 			av[i] = NULL;
 		}
 		else
-			get_sizes(fla, &buf);
+		{
+			if (S_ISREG(buf.st_mode))
+				read_dir(fla, av[i]);
+		}
 		i++;
 	}
+	ft_printf("\n");
 	i = 0;
-	while (i < ac)
-	{
-		if (av[i] != NULL)
+ 	while (i < ac)
+ 	{
+		stat(av[i], &buf);
+ 		if (av[i] != NULL && S_ISDIR(buf.st_mode))
+		{
+			ft_printf("%s:\n", av[i]);
 			read_dir(fla, av[i]);
-		i++;
-	}
+		}
+ 		i++;
+ 	}
 }
