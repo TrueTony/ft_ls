@@ -19,6 +19,7 @@ typedef struct	s_sizes
 	size_t 		size_size;
 	size_t 		total;
 	int			elems;
+	int			h_elems;
 }				t_sizes;
 
 typedef struct	s_flags

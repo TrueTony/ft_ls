@@ -30,27 +30,29 @@ void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
 {
 	int		i;
 	char	*p;
+	int		ss;
 
 	i = -1;
-	while (++i < flags->sizes->elems)
+	ss = flags->sizes->elems;
+	while (++i < ss)
 	{
-		if (names[i][0] != '.' && S_ISDIR(stat_s[i]->st_mode))
+		if ((ft_strcmp(names[i], ".") != 0) && (ft_strcmp(names[i], "..") != 0)
+			&& S_ISDIR(stat_s[i]->st_mode))
 		{
-//			sizes_to_zero(flags);
+			if (flags->a != 1 && names[i][0] == '.')
+				continue ;
 			p = names_plus_paths(names[i], path);
-			if (ft_strcmp("./CMakeFiles/3.17.3/CompilerIdC/tmp", p) == 0)
-				ft_printf("");
 			ft_printf("\n%s:\n", p);
 			read_dir(flags, p);
 			ft_printf("");
 			ft_strdel(&p);
 
 		}
-		// free(stat_s[i]);
-		// free(names[i]);
+		 free(stat_s[i]);
+		 free(names[i]);
 	}
-	// free(stat_s);
-	// free(names);
+	 free(stat_s);
+	 free(names);
 }
 
 void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
@@ -59,7 +61,8 @@ void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 	char	buf[1024];
 
 	i = -1;
-	ft_printf("total: %d\n", fla->sizes->total);
+	if((fla->a) || (!fla->a && ((fla->sizes->elems - fla->sizes->h_elems) > 0)))
+		ft_printf("total: %d\n", fla->sizes->total);
 	while (++i < fla->sizes->elems)
 	{
 		if (fla->a != 1 && names[i][0] == '.')
@@ -124,6 +127,7 @@ void	make_stats(t_flags *flags, struct stat **st, char *path, char **names)
 		st[i] = (struct stat*)ft_memalloc(sizeof(struct stat));
 		flags->l ? lstat(p, st[i]) : stat(p, st[i]);
 		names[i] = ft_strdup(dir->d_name);
+		names[i][0] == '.' ? flags->sizes->h_elems++ : 0;
 		flags->a != 1 && names[i][0] == '.' ? 0 : get_sizes(flags, st[i]);
 		ft_strdel(&p);
 		i++;
@@ -163,11 +167,7 @@ int		main(int ac, char **av)
 	if (ac > 1)
 	{
 		if ((index = parse(ac, av, flags)) == 0)
-		{
-			if (flags->R)
-				ft_printf("./:\n");
 			read_dir(flags, "./");
-		}
 		else
 			check_args(flags, ac - index, &av[index]);
 	}
