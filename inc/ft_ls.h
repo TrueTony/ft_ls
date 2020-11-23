@@ -45,8 +45,9 @@ void	time_sort_av(t_flags *flags, char **av, int ac);
 void	check_args(t_flags *fla, int ac, char **av);
 void	print_lugs(t_flags *fla, struct stat *stat_s);
 void 	print_simple(t_flags *flags, char **names);
-void	length_of_stat(char *path, t_flags *flags);
+int		length_of_stat(char *path, t_flags *flags);
 void 	usage(t_flags *flags);
+int		check_dir(char *path);
 
 
 #endif

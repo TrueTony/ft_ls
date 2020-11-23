@@ -15,7 +15,7 @@ char	*names_plus_paths(char* dirent_name, char *path)
 		free(tmp);
 	}
 	return (p);
-}hhjbnbjn
+}
 
 void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
 {
@@ -123,6 +123,8 @@ void	make_stats(t_flags *flags, struct stat **st, char *path, char **names)
 
 	i = 0;
 	d = opendir(path);
+	if (d == NULL)
+		return ;
 	while ((dir = readdir(d)))
 	{
 		p = names_plus_paths(dir->d_name, path);
@@ -130,7 +132,6 @@ void	make_stats(t_flags *flags, struct stat **st, char *path, char **names)
 			return ;
 		flags->l ? lstat(p, st[i]) : stat(p, st[i]);
 		names[i] = ft_strdup(dir->d_name);
-//		ft_printf("dir = %s, p = %s and name = %s\n", dir->d_name, p, names[i]);
 		names[i][0] == '.' ? flags->sizes->h_elems++ : 0;
 		flags->a != 1 && names[i][0] == '.' ? 0 : get_sizes(flags, st[i]);
 		ft_strdel(&p);
@@ -144,14 +145,11 @@ void	ft_free_all(t_flags *flags, char **names, struct stat **stat_s)
 	int i;
 
 	i = -1;
-//	free(names[flags->sizes->elems]);
 	ft_free_two_demention(names, flags->sizes->elems - 1);
-
 	while (++i < flags->sizes->elems)
 		free(stat_s[i]);
 	free(stat_s);
 	free(flags->sizes);
-//	free(flags);
 }
 
 void	read_dir(t_flags *flags, char *path)
@@ -163,22 +161,12 @@ void	read_dir(t_flags *flags, char *path)
 		return ;
 	if (is_file(flags, path))
 		return ;
-	length_of_stat(path, flags);
+	if (!(length_of_stat(path, flags)))
+		return ;
 	if (!(names = (char**)ft_memalloc(sizeof(char*) * (flags->sizes->elems))))
 		return ;
 	if (!(stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) * (flags->sizes->elems))))
 		return ;
-//	stat_s[flags->sizes->elems] = NULL;
-//	names[flags->sizes->elems] = NULL;
-
-
-//	if (!(stat_s[flags->sizes->elems] = (struct stat*)ft_memalloc(sizeof(struct stat))))
-//			return;
-//	stat_s[flags->sizes->elems] = NULL;
-//	if (!(names[flags->sizes->elems] = (char*)ft_memalloc(sizeof(char))))
-//		return;
-//	names[flags->sizes->elems] = NULL;
-
 	make_stats(flags, stat_s, path, names);
 	lexical_sort(names, flags, stat_s);
     flags->t ? time_sort(flags, stat_s, names) : 0;

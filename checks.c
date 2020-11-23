@@ -56,29 +56,32 @@ void	check_args(t_flags *fla, int ac, char **av)
 	fla->t ? time_sort_av(fla, av, ac) : 0;
 	while (i < ac)
 	{
-		if (stat(av[i], &buf) != 0)
+		if (lstat(av[i], &buf) != 0)
 		{
 			perror(av[i]);
 			av[i] = NULL;
 		}
 		else
 		{
-			if (S_ISREG(buf.st_mode))
+			if (!S_ISDIR(buf.st_mode))
+			{
 				read_dir(fla, av[i]);
+				av[i] = NULL;
+			}
 		}
 		i++;
 	}
-	ft_printf("\n");
-	i = 0;
- 	while (i < ac)
+	i = -1;
+ 	while (++i < ac)
  	{
  		if (av[i] != NULL)
 			stat(av[i], &buf);
  		if (av[i] != NULL && S_ISDIR(buf.st_mode))
 		{
+ 			if (!check_dir(av[i]))
+				continue ;
 			ft_printf("%s:\n", av[i]);
 			read_dir(fla, av[i]);
 		}
- 		i++;
  	}
 }

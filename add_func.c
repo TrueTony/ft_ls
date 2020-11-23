@@ -16,15 +16,39 @@ void 	str_toupper(char *str)
 		str[i] = (char)ft_toupper(str[i]);
 }
 
-void	length_of_stat(char *path, t_flags *flags)
+int	length_of_stat(char *path, t_flags *flags)
 {
 	int	i;
 	DIR	*dir;
 
 	i = 0;
 	dir = opendir(path);
+	if (dir == NULL)
+	{
+		ft_putstr_fd(path, 2);
+		ft_putstr_fd(": ", 2);
+		perror(dir);
+		return (0);
+	}
 	while (readdir(dir))
 		i++;
 	flags->sizes->elems = i;
 	closedir(dir);
+	return (1);
+}
+
+int	check_dir(char *path)
+{
+	DIR	*dir;
+
+	dir = opendir(path);
+	if (dir == NULL)
+	{
+		ft_putstr_fd(path, 2);
+		ft_putstr_fd(": ", 2);
+		perror(dir);
+		return (0);
+	}
+	closedir(dir);
+	return (1);
 }
