@@ -10,6 +10,13 @@ void	get_sizes(t_flags *flags, struct stat *stat)
 		flags->sizes->group_size = ft_strlen(getgrgid(stat->st_gid)->gr_name);
 	if (ft_numstr(stat->st_size) > flags->sizes->size_size)
 		flags->sizes->size_size = ft_numstr(stat->st_size);
+	if ((S_ISCHR(stat->st_mode) || S_ISBLK(stat->st_mode)))
+	{
+		if(ft_numstr(minor(stat->st_rdev)) > flags->sizes->minors)
+			flags->sizes->minors = ft_numstr(minor(stat->st_rdev));
+		if (ft_numstr(major(stat->st_rdev)) > flags->sizes->majours)
+			flags->sizes->majours = ft_numstr(major(stat->st_rdev));
+	}
 	flags->sizes->total += stat->st_blocks;
 }
 

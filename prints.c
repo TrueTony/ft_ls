@@ -16,10 +16,24 @@ void	print_lugs(t_flags *fla, struct stat *stat_s)
 	while (j--)
 		ft_putchar(' ');
 	ft_printf(" %s ", getgrgid(stat_s->st_gid)->gr_name);
-	j = (fla->sizes->size_size > 0) ? fla->sizes->size_size - ft_numstr(stat_s->st_size) : 0;
-	while (j--)
-		ft_putchar(' ');
-	ft_printf(" %d", stat_s->st_size);
+	if (S_ISCHR(stat_s->st_mode) || S_ISBLK(stat_s->st_mode))
+	{
+		j = (fla->sizes->majours > 0) ? fla->sizes->majours - ft_numstr(major(stat_s->st_rdev)) : 0;
+		while (j--)
+			ft_putchar(' ');
+		ft_printf(" %d,", major(stat_s->st_rdev));
+		j = (fla->sizes->minors > 0) ? fla->sizes->minors - ft_numstr(minor(stat_s->st_rdev)) : 0;
+		while (j--)
+			ft_putchar(' ');
+		ft_printf(" %d", minor(stat_s->st_rdev));
+	}
+	else
+	{
+		j = (fla->sizes->size_size > 0) ? fla->sizes->size_size - ft_numstr(stat_s->st_size) : 0;
+		while (j--)
+			ft_putchar(' ');
+		ft_printf(" %d", stat_s->st_size);
+	}
 }
 
 void 	print_simple(t_flags *flags, char **names)

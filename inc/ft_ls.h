@@ -18,6 +18,8 @@ typedef struct	s_sizes
 	size_t 		group_size;
 	size_t 		size_size;
 	size_t 		total;
+	size_t		minors;
+	size_t		majours;
 	int			elems;
 	int			h_elems;
 }				t_sizes;

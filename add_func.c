@@ -25,9 +25,10 @@ int	length_of_stat(char *path, t_flags *flags)
 	dir = opendir(path);
 	if (dir == NULL)
 	{
-		ft_putstr_fd(path, 2);
-		ft_putstr_fd(": ", 2);
-		perror(dir);
+		// ft_putstr_fd(path, 2);
+		// ft_putstr_fd(": ", 2);
+		perror(path);
+		ft_printf("\n");
 		return (0);
 	}
 	while (readdir(dir))
@@ -44,9 +45,10 @@ int	check_dir(char *path)
 	dir = opendir(path);
 	if (dir == NULL)
 	{
-		ft_putstr_fd(path, 2);
-		ft_putstr_fd(": ", 2);
-		perror(dir);
+		// ft_putstr_fd(path, 2);
+		// ft_putstr_fd(": ", 2);
+		perror(path);
+		ft_printf("\n");
 		return (0);
 	}
 	closedir(dir);
