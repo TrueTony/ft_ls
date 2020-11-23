@@ -15,16 +15,7 @@ char	*names_plus_paths(char* dirent_name, char *path)
 		free(tmp);
 	}
 	return (p);
-}
-
-void 	sizes_to_zero(t_flags *flags)
-{
-	flags->sizes->link_size = 0;
-	flags->sizes->owner_size = 0;
-	flags->sizes->group_size = 0;
-	flags->sizes->size_size = 0;
-	flags->sizes->total = 0;
-}
+}hhjbnbjn
 
 void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
 {
@@ -35,7 +26,7 @@ void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
 	i = -1;
 	ss = flags->sizes->elems;
 	free(flags->sizes);
-	while (++i < ss + 1)
+	while (++i < ss)
 	{
 		if ((ft_strcmp(names[i], ".") != 0) && (ft_strcmp(names[i], "..") != 0)
 			&& S_ISDIR(stat_s[i]->st_mode))
@@ -60,10 +51,10 @@ void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
 	char	buf[1024];
 	char	*tmp;
 
-	i = 0;
+	i = -1;
 	if((fla->a) || (!fla->a && ((fla->sizes->elems - fla->sizes->h_elems) > 0)))
 		ft_printf("total: %d\n", fla->sizes->total);
-	while (++i < fla->sizes->elems + 1)
+	while (++i < fla->sizes->elems)
 	{
 		if (fla->a != 1 && names[i][0] == '.')
 			continue;
@@ -139,16 +130,12 @@ void	make_stats(t_flags *flags, struct stat **st, char *path, char **names)
 			return ;
 		flags->l ? lstat(p, st[i]) : stat(p, st[i]);
 		names[i] = ft_strdup(dir->d_name);
+//		ft_printf("dir = %s, p = %s and name = %s\n", dir->d_name, p, names[i]);
 		names[i][0] == '.' ? flags->sizes->h_elems++ : 0;
 		flags->a != 1 && names[i][0] == '.' ? 0 : get_sizes(flags, st[i]);
 		ft_strdel(&p);
 		i++;
 	}
-	if (!(st[i] = (struct stat*)ft_memalloc(sizeof(struct stat))))
-		return ;
-	if (!(names[i] = (char*)ft_memalloc(sizeof(char))))
-		return ;
-
 	closedir(d);
 }
 
@@ -158,9 +145,9 @@ void	ft_free_all(t_flags *flags, char **names, struct stat **stat_s)
 
 	i = -1;
 //	free(names[flags->sizes->elems]);
-	ft_free_two_demention(names, flags->sizes->elems);
+	ft_free_two_demention(names, flags->sizes->elems - 1);
 
-	while (++i < flags->sizes->elems + 1)
+	while (++i < flags->sizes->elems)
 		free(stat_s[i]);
 	free(stat_s);
 	free(flags->sizes);
@@ -177,12 +164,12 @@ void	read_dir(t_flags *flags, char *path)
 	if (is_file(flags, path))
 		return ;
 	length_of_stat(path, flags);
-	if (!(names = (char**)ft_memalloc(sizeof(char*) * (flags->sizes->elems + 1))))
+	if (!(names = (char**)ft_memalloc(sizeof(char*) * (flags->sizes->elems))))
 		return ;
-	if (!(stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) * (flags->sizes->elems + 1))))
+	if (!(stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) * (flags->sizes->elems))))
 		return ;
-	stat_s[flags->sizes->elems] = NULL;
-	names[flags->sizes->elems] = NULL;
+//	stat_s[flags->sizes->elems] = NULL;
+//	names[flags->sizes->elems] = NULL;
 
 
 //	if (!(stat_s[flags->sizes->elems] = (struct stat*)ft_memalloc(sizeof(struct stat))))
