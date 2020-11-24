@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/11/24 18:15:00 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/24 18:21:46 by hlikely          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "inc/ft_ls.h"
 
 void	catch_flags(char *str, t_flags *flags)
@@ -12,17 +24,17 @@ void	catch_flags(char *str, t_flags *flags)
 		else if (str[i] == 'r')
 			flags->r = -1;
 		else if (str[i] == 'R')
-			flags->R = 1;
+			flags->br = 1;
 		else if (str[i] == 't')
 			flags->t = 1;
 		else if (str[i] == 'l')
 			flags->l = 1;
 		else
-			usage(flags) ;
+			usage(flags);
 	}
 }
 
-int	parse(int ac, char **av, t_flags *flags)
+int		parse(int ac, char **av, t_flags *flags)
 {
 	int	i;
 

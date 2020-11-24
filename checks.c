@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   checks.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/11/24 18:14:52 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/24 18:20:50 by hlikely          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "inc/ft_ls.h"
 
 void	get_sizes(t_flags *flags, struct stat *stat)
@@ -12,7 +24,7 @@ void	get_sizes(t_flags *flags, struct stat *stat)
 		flags->sizes->size_size = ft_numstr(stat->st_size);
 	if ((S_ISCHR(stat->st_mode) || S_ISBLK(stat->st_mode)))
 	{
-		if(ft_numstr(minor(stat->st_rdev)) > flags->sizes->minors)
+		if (ft_numstr(minor(stat->st_rdev)) > flags->sizes->minors)
 			flags->sizes->minors = ft_numstr(minor(stat->st_rdev));
 		if (ft_numstr(major(stat->st_rdev)) > flags->sizes->majours)
 			flags->sizes->majours = ft_numstr(major(stat->st_rdev));
@@ -22,13 +34,13 @@ void	get_sizes(t_flags *flags, struct stat *stat)
 
 void	check_type(struct stat *stat)
 {
-	S_ISDIR(stat->st_mode) ? ft_putchar('d') : ft_putchar('\0'); // is papka
-	S_ISREG(stat->st_mode) ? ft_putchar('-') : ft_putchar('\0'); // is file
-	S_ISCHR(stat->st_mode) ? ft_putchar('c') : ft_putchar('\0'); //symboly spec file
-	S_ISBLK(stat->st_mode) ? ft_putchar('b') : ft_putchar('\0'); // block file
-	S_ISFIFO(stat->st_mode) ? ft_putchar('p') : ft_putchar('\0'); // fifo channel
-	S_ISLNK(stat->st_mode) ? ft_putchar('l') : ft_putchar('\0'); // sym link
-	S_ISSOCK(stat->st_mode) ? ft_putchar('s') : ft_putchar('\0'); // socket
+	S_ISDIR(stat->st_mode) ? ft_putchar('d') : ft_putchar('\0');
+	S_ISREG(stat->st_mode) ? ft_putchar('-') : ft_putchar('\0');
+	S_ISCHR(stat->st_mode) ? ft_putchar('c') : ft_putchar('\0');
+	S_ISBLK(stat->st_mode) ? ft_putchar('b') : ft_putchar('\0');
+	S_ISFIFO(stat->st_mode) ? ft_putchar('p') : ft_putchar('\0');
+	S_ISLNK(stat->st_mode) ? ft_putchar('l') : ft_putchar('\0');
+	S_ISSOCK(stat->st_mode) ? ft_putchar('s') : ft_putchar('\0');
 }
 
 void	check_access(struct stat *stat)
@@ -79,16 +91,16 @@ void	check_args(t_flags *fla, int ac, char **av)
 		i++;
 	}
 	i = -1;
- 	while (++i < ac)
- 	{
- 		if (av[i] != NULL)
+	while (++i < ac)
+	{
+		if (av[i] != NULL)
 			stat(av[i], &buf);
- 		if (av[i] != NULL && S_ISDIR(buf.st_mode))
+		if (av[i] != NULL && S_ISDIR(buf.st_mode))
 		{
- 			if (!check_dir(av[i]))
+			if (!check_dir(av[i]))
 				continue ;
 			ft_printf("%s:\n", av[i]);
 			read_dir(fla, av[i]);
 		}
- 	}
+	}
 }

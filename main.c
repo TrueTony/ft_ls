@@ -1,23 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/11/24 18:14:15 by hlikely           #+#    #+#             */
+/*   Updated: 2020/11/24 18:37:05 by hlikely          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "inc/ft_ls.h"
 
-char	*names_plus_paths(char* dirent_name, char *path)
-{
-	char	*p;
-	char	*tmp;
-
-
-	if (ft_strcmp(path, "./") == 0)
-		p = ft_strjoin(path, dirent_name);
-	else
-	{
-		tmp = ft_strjoin(path, "/");
-		p = ft_strjoin(tmp, dirent_name);
-		free(tmp);
-	}
-	return (p);
-}
-
-void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
+void	recurs(t_flags *flags, struct stat **stat_s, char **names, char *path)
 {
 	int		i;
 	char	*p;
@@ -45,38 +40,12 @@ void	if_R(t_flags *flags, struct stat **stat_s, char **names, char *path)
 	free(names);
 }
 
-void	parse_l(t_flags *fla, struct stat **stat_s, char **names)
-{
-	int		i;
-	char	buf[1024];
-	char	*tmp;
-
-	i = -1;
-	if((fla->a) || (!fla->a && ((fla->sizes->elems - fla->sizes->h_elems) > 0)))
-		ft_printf("total: %d\n", fla->sizes->total);
-	while (++i < fla->sizes->elems)
-	{
-		if (fla->a != 1 && names[i][0] == '.')
-			continue;
-		check_type(stat_s[i]);
-		check_access(stat_s[i]);
-		print_lugs(fla, stat_s[i]);
-		tmp = ctime(&stat_s[i]->st_mtime);
-		tmp = ft_strndup(tmp+4, 12);
-		ft_printf(" %s %s", tmp, names[i]);
-		readlink(names[i], buf, 1024) != -1 ? ft_printf(" -> %s", buf) : 0;
-		ft_bzero(buf, 1024);
-		ft_printf("\n");
-		free(tmp);
-	}
-}
-
-int 	is_file(t_flags *flags, char *path)
+int		is_file(t_flags *flags, char *path)
 {
 	struct stat *tmp;
 	int			link;
 	char		buf[1024];
-	char 		*time;
+	char		*time;
 
 	if (!(tmp = (struct stat*)ft_memalloc(sizeof(struct stat))))
 		return (0);
@@ -85,12 +54,12 @@ int 	is_file(t_flags *flags, char *path)
 	!S_ISREG(tmp->st_mode) && !S_ISFIFO(tmp->st_mode))
 	{
 		free(tmp);
-		return 0;
+		return (0);
 	}
 	if (S_ISDIR(tmp->st_mode) && !link)
 	{
 		free(tmp);
-		return 0;
+		return (0);
 	}
 	ft_bzero(buf, 1024);
 	if (flags->l)
@@ -140,24 +109,12 @@ void	make_stats(t_flags *flags, struct stat **st, char *path, char **names)
 	closedir(d);
 }
 
-void	ft_free_all(t_flags *flags, char **names, struct stat **stat_s)
-{
-	int i;
-
-	i = -1;
-	ft_free_two_demention(names, flags->sizes->elems - 1);
-	while (++i < flags->sizes->elems)
-		free(stat_s[i]);
-	free(stat_s);
-	free(flags->sizes);
-}
-
 void	read_dir(t_flags *flags, char *path)
 {
 	char			**names;
 	struct stat		**stat_s;
 
-	if(!(flags->sizes = (t_sizes*)ft_memalloc(sizeof(t_sizes))))
+	if (!(flags->sizes = (t_sizes*)ft_memalloc(sizeof(t_sizes))))
 		return ;
 	if (is_file(flags, path))
 		return ;
@@ -165,14 +122,15 @@ void	read_dir(t_flags *flags, char *path)
 		return ;
 	if (!(names = (char**)ft_memalloc(sizeof(char*) * (flags->sizes->elems))))
 		return ;
-	if (!(stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) * (flags->sizes->elems))))
+	if (!(stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) *
+			(flags->sizes->elems))))
 		return ;
 	make_stats(flags, stat_s, path, names);
 	lexical_sort(names, flags, stat_s);
-    flags->t ? time_sort(flags, stat_s, names) : 0;
-	flags->l ? parse_l(flags, stat_s, names) : print_simple(flags, names);
-	flags->R ? if_R(flags, stat_s, names, path) : 0;
-	flags->R ? 0 : ft_free_all(flags, names, stat_s);
+	flags->t ? time_sort(flags, stat_s, names) : 0;
+	flags->l ? print_l(flags, stat_s, names) : print_simple(flags, names);
+	flags->br ? recurs(flags, stat_s, names, path) : 0;
+	flags->br ? 0 : ft_free_all(flags, names, stat_s);
 }
 
 int		main(int ac, char **av)
@@ -180,7 +138,7 @@ int		main(int ac, char **av)
 	t_flags *flags;
 	int		index;
 
-	if(!(flags = (t_flags*)ft_memalloc(sizeof(t_flags))))
+	if (!(flags = (t_flags*)ft_memalloc(sizeof(t_flags))))
 		return (0);
 	flags->r = 1;
 	if (ac > 1)
