@@ -6,7 +6,7 @@
 /*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:52 by hlikely           #+#    #+#             */
-/*   Updated: 2020/11/24 18:20:50 by hlikely          ###   ########.fr       */
+/*   Updated: 2020/11/24 18:21:04 by hlikely          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,25 @@ void	check_access(struct stat *stat)
 		(stat->st_mode & S_IXOTH) ? ft_putchar('x') : ft_putchar('-');
 }
 
+void	is_dir(int ac, char **av, t_flags *fla, struct stat buf)
+{
+	int i;
+
+	i = -1;
+	while (++i < ac)
+	{
+		if (av[i] != NULL)
+			stat(av[i], &buf);
+		if (av[i] != NULL && S_ISDIR(buf.st_mode))
+		{
+			if (!check_dir(av[i]))
+				continue ;
+			ft_printf("%s:\n", av[i]);
+			read_dir(fla, av[i]);
+		}
+	}
+}
+
 void	check_args(t_flags *fla, int ac, char **av)
 {
 	int			i;
@@ -90,17 +109,5 @@ void	check_args(t_flags *fla, int ac, char **av)
 		}
 		i++;
 	}
-	i = -1;
-	while (++i < ac)
-	{
-		if (av[i] != NULL)
-			stat(av[i], &buf);
-		if (av[i] != NULL && S_ISDIR(buf.st_mode))
-		{
-			if (!check_dir(av[i]))
-				continue ;
-			ft_printf("%s:\n", av[i]);
-			read_dir(fla, av[i]);
-		}
-	}
+	is_dir(ac, av, fla, buf);
 }

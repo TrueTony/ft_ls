@@ -6,38 +6,31 @@
 /*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:15 by hlikely           #+#    #+#             */
-/*   Updated: 2020/11/24 18:37:05 by hlikely          ###   ########.fr       */
+/*   Updated: 2020/11/24 19:06:49 by hlikely          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "inc/ft_ls.h"
 
-void	recurs(t_flags *flags, struct stat **stat_s, char **names, char *path)
+void	l_for_file(t_flags *flags, struct stat *st, char *buf, char *path)
 {
-	int		i;
-	char	*p;
-	int		ss;
+	char *time;
 
-	i = -1;
-	ss = flags->sizes->elems;
-	free(flags->sizes);
-	while (++i < ss)
+	if (flags->l)
 	{
-		if ((ft_strcmp(names[i], ".") != 0) && (ft_strcmp(names[i], "..") != 0)
-			&& S_ISDIR(stat_s[i]->st_mode))
-		{
-			if (flags->a != 1 && names[i][0] == '.')
-				continue ;
-			p = names_plus_paths(names[i], path);
-			ft_printf("\n%s:\n", p);
-			read_dir(flags, p);
-			ft_strdel(&p);
-		}
-		free(stat_s[i]);
-		free(names[i]);
+		check_type(st);
+		check_access(st);
+		print_lugs(flags, st);
+		time = ctime(&st->st_mtime);
+		time = ft_strndup(time + 4, 12);
+		ft_printf(" %s %s", time, path);
+		readlink(path, buf, 1024) != -1 ?
+		ft_printf(" -> %s\n", buf) : ft_putchar('\n');
+		ft_bzero(buf, 1024);
+		free(time);
 	}
-	free(stat_s);
-	free(names);
+	else
+		ft_printf("% s\n", path);
 }
 
 int		is_file(t_flags *flags, char *path)
@@ -45,7 +38,6 @@ int		is_file(t_flags *flags, char *path)
 	struct stat *tmp;
 	int			link;
 	char		buf[1024];
-	char		*time;
 
 	if (!(tmp = (struct stat*)ft_memalloc(sizeof(struct stat))))
 		return (0);
@@ -62,22 +54,7 @@ int		is_file(t_flags *flags, char *path)
 		return (0);
 	}
 	ft_bzero(buf, 1024);
-	if (flags->l)
-	{
-		check_type(tmp);
-		check_access(tmp);
-		print_lugs(flags, tmp);
-		time = ctime(&tmp->st_mtime);
-		time = ft_strndup(time + 4, 12);
-		ft_printf(" %s %s", time, path);
-		if (readlink(path, buf, 1024) != -1)
-			ft_printf(" -> %s", buf);
-		ft_bzero(buf, 1024);
-		free(time);
-	}
-	else
-		ft_printf("% s", path);
-	ft_printf("\n");
+	l_for_file(flags, tmp, buf, path);
 	free(tmp);
 	free(flags->sizes);
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:15:08 by hlikely           #+#    #+#             */
-/*   Updated: 2020/11/24 18:17:35 by hlikely          ###   ########.fr       */
+/*   Updated: 2020/11/24 19:06:49 by hlikely          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,4 +113,32 @@ void	time_sort_av(t_flags *flags, char **av, int ac)
 	}
 	free(first);
 	free(second);
+}
+
+void	recurs(t_flags *flags, struct stat **stat_s, char **names, char *path)
+{
+	int		i;
+	char	*p;
+	int		elem_count;
+
+	i = -1;
+	elem_count = flags->sizes->elems;
+	free(flags->sizes);
+	while (++i < elem_count)
+	{
+		if ((ft_strcmp(names[i], ".") != 0) && (ft_strcmp(names[i], "..") != 0)
+			&& S_ISDIR(stat_s[i]->st_mode))
+		{
+			if (flags->a != 1 && names[i][0] == '.')
+				continue ;
+			p = names_plus_paths(names[i], path);
+			ft_printf("\n%s:\n", p);
+			read_dir(flags, p);
+			ft_strdel(&p);
+		}
+		free(stat_s[i]);
+		free(names[i]);
+	}
+	free(stat_s);
+	free(names);
 }

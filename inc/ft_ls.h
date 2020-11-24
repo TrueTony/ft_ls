@@ -6,7 +6,7 @@
 /*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:17:29 by hlikely           #+#    #+#             */
-/*   Updated: 2020/11/24 18:43:18 by hlikely          ###   ########.fr       */
+/*   Updated: 2020/11/24 19:06:49 by hlikely          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,7 @@ void			print_time(struct stat *st, time_t time_now);
 void			print_l(t_flags *fla, struct stat **stat_s, char **names);
 void			ft_free_all(t_flags *flags, char **names, struct stat **stat_s);
 char			*names_plus_paths(char *dirent_name, char *path);
+void			recurs(t_flags *flags, struct stat **stat_s, char **names,
+																char *path);
 
 #endif
