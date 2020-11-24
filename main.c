@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:15 by hlikely           #+#    #+#             */
-/*   Updated: 2020/11/24 19:06:49 by hlikely          ###   ########.fr       */
+/*   Updated: 2020/11/24 20:06:37 by ksenaida         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,9 @@ void	read_dir(t_flags *flags, char *path)
 	if (!(flags->sizes = (t_sizes*)ft_memalloc(sizeof(t_sizes))))
 		return ;
 	if (is_file(flags, path))
-		return ;
+		return;
 	if (!(length_of_stat(path, flags)))
-		return ;
+		return;
 	if (!(names = (char**)ft_memalloc(sizeof(char*) * (flags->sizes->elems))))
 		return ;
 	if (!(stat_s = (struct stat**)ft_memalloc(sizeof(struct stat*) *

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sort.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hlikely <hlikely@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ksenaida <ksenaida@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:15:08 by hlikely           #+#    #+#             */
-/*   Updated: 2020/11/24 19:06:49 by hlikely          ###   ########.fr       */
+/*   Updated: 2020/11/24 20:07:46 by ksenaida         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@ void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s)
 	char		*tmp;
 	struct stat	*tmp_stat;
 	int			i;
+	int			j;
 
 	i = -1;
-	if (flags->sizes->elems > 1)
+	while (flags->sizes->elems > 1 && i < flags->sizes->elems - 1)
 	{
+		j = 0;
 		while (++i < flags->sizes->elems - 1)
 		{
 			if (names[i] != NULL && names[i + 1] != NULL &&
@@ -32,34 +34,39 @@ void	lexical_sort(char **names, t_flags *flags, struct stat **stat_s)
 				tmp = names[i];
 				names[i] = names[i + 1];
 				names[i + 1] = tmp;
-				i = -1;
+				j = -1;
 			}
 		}
+		i = (j == -1) ? -1 : i;
 	}
 }
 
-void	time_sort(t_flags *flags, struct stat **stat_s, char **names)
+void	time_sort(t_flags *f, struct stat **stat_s, char **names)
 {
-	int			i;
 	char		*tmp;
 	struct stat	*tmp_stat;
+	int			i;
+	int			j;
 
 	i = -1;
-	if (flags->sizes->elems == 1)
-		return ;
-	while (++i < flags->sizes->elems - 1)
+	while (i == -1 && f->sizes->elems > 1)
 	{
-		if (stat_s[i] != NULL && stat_s[i + 1] != NULL &&
-		(flags->r * stat_s[i]->st_mtime < flags->r * stat_s[i + 1]->st_mtime))
+		j = 0;
+		while (++i < f->sizes->elems - 1)
 		{
-			tmp_stat = stat_s[i];
-			stat_s[i] = stat_s[i + 1];
-			stat_s[i + 1] = tmp_stat;
-			tmp = names[i];
-			names[i] = names[i + 1];
-			names[i + 1] = tmp;
-			i = -1;
+			if (stat_s[i] != NULL && stat_s[i + 1] != NULL &&
+				(f->r * stat_s[i]->st_mtime < f->r * stat_s[i + 1]->st_mtime))
+			{
+				tmp_stat = stat_s[i];
+				stat_s[i] = stat_s[i + 1];
+				stat_s[i + 1] = tmp_stat;
+				tmp = names[i];
+				names[i] = names[i + 1];
+				names[i + 1] = tmp;
+				j = -1;
+			}
 		}
+		i = (j == -1) ? -1 : 0;
 	}
 }
 
@@ -93,9 +100,7 @@ void	time_sort_av(t_flags *flags, char **av, int ac)
 	struct stat	*second;
 
 	i = -1;
-	if (ac < 2)
-		return ;
-	if (!(first = (struct stat*)ft_memalloc(sizeof(struct stat))))
+	if ((ac < 2) || !(first = (struct stat*)ft_memalloc(sizeof(struct stat))))
 		return ;
 	if (!(second = (struct stat*)ft_memalloc(sizeof(struct stat))))
 		return ;

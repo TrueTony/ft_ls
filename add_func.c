@@ -30,6 +30,7 @@ int		length_of_stat(char *path, t_flags *flags)
 	{
 		perror(path);
 		ft_printf("\n");
+		free(flags->sizes);
 		return (0);
 	}
 	while (readdir(dir))

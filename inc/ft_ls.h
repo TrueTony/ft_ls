@@ -49,7 +49,7 @@ typedef struct	s_flags
 
 void			lexical_sort(char **names, t_flags *fla, struct stat **stat_s);
 void			read_dir(t_flags *flags, char *path);
-void			time_sort(t_flags *flags, struct stat **stat_s, char **names);
+void			time_sort(t_flags *f, struct stat **stat_s, char **names);
 int				parse(int ac, char **av, t_flags *flags);
 void			check_type(struct stat *stat);
 void			check_access(struct stat *stat);
